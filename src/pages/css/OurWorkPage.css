@@ -1,0 +1,39 @@
+.our-work-page {
+  padding: 2rem;
+  background-color: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%); 
+  min-height: 100vh;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d) !important;
+  color:white;
+  width: 100%;
+  padding:  2rem 0;
+  margin: 0 0 1rem 0 ;
+  border-radius: 8px;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.gallery-item {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

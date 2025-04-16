@@ -1,0 +1,146 @@
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+#home {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрирование содержимого */
+  justify-content: center; /* Вертикальное центрирование */
+  /* Занимает всю высоту экрана */
+  height: 80vh;
+  
+}
+
+#homepageid {
+  margin: 10px auto; /* Центрирование */
+  padding: 0 15px;
+}
+
+#brand-overlay-id {
+  display: flex; /* Flexbox для горизонтального расположения */
+  align-items: center; /* Выравнивание по вертикали */
+  justify-content: center; /* Центрирование по горизонтали */
+  gap: 30px; /* Расстояние между логотипом и текстом */
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d) !important;
+  
+  width: 100%;
+  padding: 20px 0; /* Паддинги сверху и снизу */
+}
+
+#logoid {
+  display: flex; /* Контейнер для логотипа */
+  align-items: center; /* Выравнивание по центру */
+}
+
+#brand-logo {
+  width: 100px;
+  height: 100px;
+}
+
+#brand-text {
+  display: flex;
+  flex-direction: column; /* Текст в колонку */
+  text-align: left; /* Текст прижимается к левому краю */
+}
+
+#brand-word {
+
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-size: 45px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  line-height: 1.2;
+  margin: 2px 0;
+}
+
+.newProduct{
+  width: 100%;
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d) !important;
+  padding:30px 0 10px 0;
+  color: white;
+  /* margin:0; */
+
+
+}
+
+.newProducts{
+  width: 100%;
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d) !important;
+  color: white;
+  padding:20px 0 20px 0;
+  /* margin:0; */
+
+
+}
+
+.newDescription {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  margin: 20px 0 0 0;
+  min-height: 30vh;
+}
+
+.cardsction {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 1000px; /* Увеличенная максимальная ширина */
+  background-size: 100% 100%;
+  padding: 0 40px; /* Больше отступов по бокам */
+  flex-wrap: wrap; /* Позволяет переносить карточки */
+  justify-content: space-between;
+}
+
+.card-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+  aspect-ratio: 16/9; /* Сохраняем пропорции */
+  transition: transform 0.3s;
+}
+
+/* Адаптация под мобильные устройства */
+@media (max-width: 768px) {
+  .cardsction {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cardsction img {
+    min-width: 300px;
+    min-height: 300px;
+  }
+}
+
+.card-item {
+  flex: 1 1 calc(48% - 15px); /* 2 карточки в ряд */
+  max-width: calc(48% - 15px);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+  height: 200px; /* Фиксированная высота */
+}
+
+.card-item:hover {
+  transform: translateY(-5px);
+}
+
+
+/* @media (max-width: 1080px) {
+  #brand-word {
+    font-size: 24px;
+  }
+  
+  .cardsction {
+    flex-direction: column;
+    gap: 15px;
+  }
+} */

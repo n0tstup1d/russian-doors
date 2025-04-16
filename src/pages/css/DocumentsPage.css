@@ -1,0 +1,113 @@
+/* DocumentsPage.css */
+.documents-page {
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%);
+  min-height: 100vh;
+  color: white;
+  font-family: 'Russo One', sans-serif;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.document-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.document-card {
+  background: rgba(45, 45, 45, 0.9);
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.button-card:hover {
+  transform: translateY(-5px);
+}
+
+.button-card .btn {
+  margin-top: 1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%);
+  color: #1a1a1a;
+  border: none;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #FF69B4 0%, #8A2BE2 25%);
+  color: white;
+  border: none;
+}
+
+/* В DocumentsPage.css */
+  .icon-wrapper {
+    background: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%); /* Градиентный фон */
+    border-radius: 8px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.icon-wrapper i {
+  font-size: 2rem;
+  color: #1a1a1a; /* Цвет иконки */
+}
+
+.document-card:hover .icon-wrapper {
+  transform: rotate(-15deg) scale(1.1);
+}
+
+.text-card .card-content {
+  text-align: left;
+}
+
+.certificate-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cert-link {
+  color: #8A2BE2;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 5px;
+  transition: 0.3s ease;
+}
+
+.cert-link:hover {
+  background: rgba(78, 205, 196, 0.2);
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .document-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+

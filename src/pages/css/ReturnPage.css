@@ -1,0 +1,174 @@
+/* ReturnPage.css */
+.return-page {
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%);
+    min-height: 100vh;
+    color: white;
+    font-family: 'Russo One', sans-serif;
+  }
+  
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .page-header h1 {
+    font-size: 3rem;
+    position: relative;
+    display: inline-block;
+    
+
+    
+  }
+  
+  .page-header h1::after {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 3px;
+    background: #ffffff;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .steps-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  .step-card {
+    background: rgba(45, 45, 45, 0.9);
+    border-radius: 15px;
+    padding: 2rem;
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  .step-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .step-number {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background:linear-gradient(50deg, #8A2BE2 10%, #FF69B4 55%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+  }
+  
+  .step-number span {
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  .step-number i {
+    font-size: 1.2rem;
+    margin-top: 0.3rem;
+  }
+  
+  .step-content {
+    text-align: center;
+    padding-top: 3rem;
+  }
+  
+  .step-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%);
+  }
+  
+  .step-content p {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+  
+  .important-note {
+    background: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%);
+    color: #1a1a1a;
+    border-radius: 15px;
+    padding: 1.5rem;
+    max-width: 800px;
+    margin: 4rem auto 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+  }
+  
+  .important-note i {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .steps-section {
+      grid-template-columns: 1fr;
+    }
+    
+    .page-header h1 {
+      font-size: 2rem;
+    }
+  }
+  /* ReturnPage.css */
+.journey-steps {
+    position: relative;
+    padding: 4rem 0;
+  }
+  
+  .road {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+    z-index: -1;
+  }
+  
+  .step-marker {
+    position: relative;
+    display: inline-block;
+    margin: 0 2rem;
+    text-align: center;
+  }
+  
+  .marker-icon {
+    background: #4ecdc4;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .marker-icon i {
+    font-size: 1.5rem;
+    color: #1a1a1a;
+  }
+  
+  .step-description {
+    color: white;
+    opacity: 0.8;
+  }
+  
+  @media (max-width: 768px) {
+    .road {
+      display: none;
+    }
+  }

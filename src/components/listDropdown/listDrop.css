@@ -1,0 +1,11 @@
+  .nav-link {
+    color: #6a0dad !important; /* Стандартный цвет */
+    transition: all 0.3s;
+  }
+  
+  .nav-link.active {
+    color: white !important; /* Яркий оранжевый */
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%) !important;
+    border-radius: 4px;
+  }
