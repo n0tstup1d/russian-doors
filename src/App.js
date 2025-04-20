@@ -7,6 +7,9 @@ import CatalogPage from './pages/CatalogPage';
 import WorkPage from './pages/OurWorkPage';
 import DocumentsPage from './pages/DocumentsPage';
 import ReturnPage from './pages/ReturnPage';
+import Contacts from './pages/Contacts';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 export default function App() {
   return (
@@ -23,10 +26,11 @@ export default function App() {
             {/* <Route path="/delivery" element={<CatalogPage />} />
             <Route path="/installing" element={<CatalogPage />} /> */}
             <Route path="/returnProduct" element={<ReturnPage />} />
-            <Route path="/contacts" element={<CatalogPage />} />
-            <Route path="/auth" element={<CatalogPage />} />
-            <Route path="/exit" element={<CatalogPage />} />
+            <Route path="/contacts" element={<Contacts />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/adm" element={<CatalogPage />} />
+            <Route path="/assets/document/policy.pdf" element={<a href="/assets/document/policy.pdf" />} />
           </Routes>
         </main>
 

@@ -10,11 +10,10 @@ const Footer = () => {
         </div>
         {/* Социальные иконки */}
         <div className="social-icons">
-          <a href="#"><i className="fab fa-vk"></i></a>
-          <a href="#"><i className="fab fa-odnoklassnik"></i></a>
-          <a href="#"><i className="fas fa-paper-plane"></i></a>
-          <a href="#"><i className="fab fa-whatsapp"></i></a>
-          <a href="#"><i className="fas fa-phone-alt"></i></a>
+          <a href="#"><i className="fab fa-vk" style={{ color: '#6a0dad' }}></i></a>
+          <a href="#"><i className="fas fa-paper-plane" style={{ color: '#6a0dad' }}></i></a>
+          <a href="#"><i className="fab fa-whatsapp" style={{ color: '#6a0dad' }}></i></a>
+          <a href="#"><i className="fas fa-phone-alt" style={{ color: '#6a0dad' }}></i></a>
         </div>
 
         {/* Контактная информация */}
@@ -47,11 +46,32 @@ const Footer = () => {
           <p>Менеджер: pavel@orskdveri.ru,</p>
           <p>gorin@orskdveri.ru</p>
           <h3>Нашли ошибку на сайте?</h3>
-          <p>Напишите админу : admin @ orskdveri . ru</p>
+          <p>Напишите админу : admin@orskdveri.ru</p>
         </div>
 
         {/* Разделитель */}
         <hr />
+        
+        <div class="map-container1">
+          <p class="location-note">Мы находимся:</p>
+          <div class="map-container">
+            <iframe 
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3A39abd049336778b73e11cb98efc0c4f9a8209f56fc81dd2100a001bcb9c22ac0&amp;source=constructor"
+              allowfullscreen
+              className="map-iframe"
+              style={{ 
+                width: '100%', 
+                maxWidth: '600px', 
+                height: '450px', 
+                margin: '0 auto',
+                border: '1px solid #ccc',
+                borderRadius: '8px'
+              }} 
+              >
+            </iframe>
+          </div>
+        </div>
+        <hr/>
 
         {/* Юридические данные */}
         <div className="legal-data">

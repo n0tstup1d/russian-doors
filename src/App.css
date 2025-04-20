@@ -1,3 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+*{
+  font-family: 'Roboto', sans-serif;
+}
+:root {
+  --dark-purple: #2A0D30;
+  --brand-purple: #5F2167;
+  --accent-pink: #EC86D0;
+  --gold-accent: #FFD966;
+  --light-bg: #F5F5F5;
+}
 .App {
   text-align: center;
 }
@@ -108,5 +119,22 @@ Footer
 .logo-top img {
   width: 100px; /* Установите нужный размер */
   height: auto;
+}
+.auth-page {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.alert-danger {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
 }
 

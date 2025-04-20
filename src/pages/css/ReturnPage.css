@@ -1,7 +1,7 @@
 /* ReturnPage.css */
 .return-page {
     padding: 4rem 2rem;
-    background: linear-gradient(135deg, #8A2BE2 0%, #FF69B4 25%);
+    background: linear-gradient(45deg, var(--brand-purple) 0%, var(--dark-purple) 100%);
     min-height: 100vh;
     color: white;
     font-family: 'Russo One', sans-serif;
