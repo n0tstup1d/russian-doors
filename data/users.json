@@ -1,0 +1,16 @@
+[
+  {
+    "id": "fa066e1e-0967-4f8e-9ce0-b6751338f41d",
+    "email": "goringerman12@gmail.com",
+    "password": "$2b$10$cEPzK33n7E5aDWMSl6C7zek4GdzPMp.NWxpc9nrI/EzmxKATB/lU2",
+    "createdAt": "2025-04-21T18:33:49.444Z",
+    "isAdmin": 1
+  },
+  {
+    "id": "404ef95e-002c-41de-9017-6d8192be3fee",
+    "email": "qweee@qweqwe",
+    "password": "$2b$10$Lsv4JWrCpAtq.0/OO8voROGV4RWfas3AiE4tIGG3aRwgcwjgss6Vi",
+    "createdAt": "2025-04-21T19:23:12.217Z",
+    "isAdmin": 0
+  }
+]

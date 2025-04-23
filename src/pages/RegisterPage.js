@@ -12,27 +12,30 @@ const RegisterPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-    
-    if (data.password !== data.confirmPassword) {
+  // Обновите handleSubmit
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+  
+  if (data.password !== data.confirmPassword) {
       return setError('Пароли не совпадают');
-    }
+  }
 
-    if (!isPolicyAccepted) {
+  if (!isPolicyAccepted) {
       return setError('Необходимо согласие на обработку персональных данных');
-    }
+  }
 
-    try {
-      await registerUser(data);
+  try {
+      await registerUser({
+          email: data.email,
+          password: data.password
+      });
       navigate('/login');
-    } catch (err) {
+  } catch (err) {
       setError(err.message);
-    }
-  };
-
+  }
+};
   return (
     <>
     <div class="non">

@@ -1,0 +1,49 @@
+{
+    "categories": [
+      {
+        "name": "Двери",
+        "subcategories": ["Входные", "Межкомнатные"]
+      },
+      {
+        "name": "Фурнитура",
+        "subcategories": [
+          "Ручки",
+          "Защёлки и задвижки", 
+          "Замки",
+          "Петли"
+        ]
+      }
+    ],
+    "products": [
+      {
+        "id": 1,
+        "name": "Дверь 1",
+        "category": "Двери",
+        "subcategory": "Входные",
+        "quantity": 10,
+        "price": "2500₽",
+        "image": "https://picsum.photos/200/150?random=1",
+        "description": "Прочная входная дверь"
+      },
+      {
+        "id": 2,
+        "name": "Ручка 1",
+        "category": "Фурнитура",
+        "subcategory": "Ручки",
+        "quantity": 10,
+        "price": "1500₽",
+        "image": "https://picsum.photos/200/150?random=2",
+        "description": "Стильная дверная ручка"
+      },
+      {
+        "id": 3,
+        "name": "Петля 1",
+        "category": "Фурнитура",
+        "subcategory": "Петли",
+        "quantity": 2,
+        "price": "150₽",
+        "image": "https://picsum.photos/200/150?random=2",
+        "description": "Стильная петля"
+      }
+    ]
+  }

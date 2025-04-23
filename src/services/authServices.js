@@ -1,31 +1,56 @@
-const USERS_KEY = 'app_users';
+// services/authServices.js
+const API_URL = "http://localhost:5000/api";
 
-export const setAuthToken = (token) => {
-    localStorage.setItem('authToken', token);
-  };
-  
-  export const getAuthToken = () => {
-    return localStorage.getItem('authToken');
-  };
-  
-  export const removeAuthToken = () => {
-    localStorage.removeItem('authToken');
-  };
+// Регистрация
+export const registerUser = async (userData) => {
+  const response = await fetch(`${API_URL}/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
 
-export const registerUser = (user) => {
-  const users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
-  if (users.some(u => u.email === user.email)) {
-    throw new Error('Пользователь с таким email уже существует');
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
   }
-  users.push(user);
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
 };
 
-export const loginUser = (email, password) => {
-  const users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
-  const user = users.find(u => u.email === email && u.password === password);
-  if (!user) {
-    throw new Error('Неверный email или пароль');
+// Авторизация
+export const loginUser = async (email, password) => {
+  try {
+    const response = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    console.log(JSON.stringify({ email, password }));
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    const data = await response.json();
+    console.log("Ответ сервера:", data); // Проверьте isAdmin здесь
+
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("isAdmin", data.isAdmin);
+    console.log(data.isAdmin)
+
+    return data;
+  } catch (err) {
+    throw err;
   }
-  return user;
+};
+// Токен можно хранить в localStorage (это безопасно, если используется HTTPS)
+export const setAuthToken = (token) => {
+  localStorage.setItem("authToken", token);
+};
+
+export const getAuthToken = () => {
+  return localStorage.getItem("authToken");
+};
+
+export const removeAuthToken = () => {
+  localStorage.removeItem("authToken");
 };

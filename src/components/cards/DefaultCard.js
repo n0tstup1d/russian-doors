@@ -1,46 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function CatalogPage() {
+export default function DefaultCards({ addToCart }) {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
-
-    const categories = [
-        {
-            name: 'Двери',
-            subcategories: ['Входные', 'Межкомнатные']
-        },
-        {
-            name: 'Фурнитура',
-            subcategories: [             
-                'Ручки',
-                'Защёлки и задвижки',
-                'Замки',
-                'Петли'
-            ]
-        }
-    ];
-
-    const products = Array(50).fill().map((_, i) => {
-        const isDoor = i % 2 === 0;
-        return {
-            id: i,
-            name: `${isDoor ? 'Дверь' : 'Фурнитура'} ${i + 1}`,
-            category: isDoor ? 'Двери' : 'Фурнитура',
-            subcategory: isDoor 
-                ? categories[0].subcategories[i % 2]
-                : categories[1].subcategories[i % 9],
-            price: `${(i + 1) * 2500}₽`,
-            image: `https://picsum.photos/200/150?random=${i}`
-        };
+    const [data, setData] = useState({ 
+        categories: [],
+        products: []
     });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Загрузка данных из JSON
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('/api/products.json');
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                const jsonData = await response.json();
+                setData(jsonData);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const filteredProducts = selectedCategory 
-        ? products.filter(p => 
+        ? data.products.filter(p => 
             p.category === selectedCategory || 
             p.subcategory === selectedCategory
         )
-        : products;
+        : data.products;
+
+    if (loading) return <div className="text-center mt-5">Загрузка...</div>;
+    if (error) return <div className="text-center mt-5 text-danger">Ошибка: {error}</div>;
 
     return (
         <div className="container-fluid vh-100 position-relative">
@@ -133,35 +129,31 @@ export default function CatalogPage() {
                     <div className="p-3">
                         <h4 className="mb-3 d-none d-md-block">Категории</h4>
                         <div className="accordion">
-                            {categories.map((mainCat, i) => (
+                            {data.categories.map((mainCat, i) => (
                                 <div key={i} className="accordion-item">
                                     <h2 className="accordion-header">
-                                        <button 
-                                            className="accordion-button collapsed" 
+                                        <button className="accordion-button collapsed" 
                                             type="button"
                                             data-bs-toggle="collapse"
-                                            data-bs-target={`#collapse${i}`}
-                                        >
+                                            data-bs-target={`#collapse${i}`}>
                                             {mainCat.name}
                                         </button>
                                     </h2>
-                                    <div 
-                                        id={`collapse${i}`} 
-                                        className="accordion-collapse collapse"
-                                    >
+                                    <div id={`collapse${i}`} className="accordion-collapse collapse">
                                         <div className="accordion-body p-0">
                                             <div className="list-group">
                                                 {mainCat.subcategories.map((sub, j) => (
                                                     <button
                                                         key={j}
                                                         onClick={() => {
-                                                            setSelectedCategory(prev => prev === sub ? null : sub);
+                                                            setSelectedCategory(prev => 
+                                                                prev === sub ? null : sub
+                                                            );
                                                             setShowMobileMenu(false);
                                                         }}
                                                         className={`list-group-item list-group-item-action ps-4 ${
                                                             selectedCategory === sub ? 'active' : ''
-                                                        }`}
-                                                    >
+                                                        }`}>
                                                         {sub}
                                                     </button>
                                                 ))}
@@ -208,7 +200,10 @@ export default function CatalogPage() {
                                             <button className="btn btn-outline-dark btn-sm">
                                                 Подробнее
                                             </button>
-                                            <button className="btn btn-outline-dark btn-sm">
+                                            <button 
+                                                className="btn btn-outline-dark btn-sm"
+                                                onClick={() => addToCart(product)}
+                                            >
                                                 В корзину
                                             </button>
                                         </div>

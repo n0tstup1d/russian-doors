@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react'; // Добавьте импорт useContext
+import { CartContext } from '../components/CartContext/CartProvider'; 
 import DefaultCards from '../components/cards/DefaultCard';
 
-export default function CatalogPage() {
+const CatalogPage = () => {
+  const { addToCart } = useContext(CartContext);
+  
+  // Добавьте проверку доступности контекста
+  if (!addToCart) {
+    console.error('CartContext is not available');
+  }
+
   return (
     <div className="container forCatalog">
-      <DefaultCards />
+      <DefaultCards addToCart={addToCart} />
     </div>
   );
-}
+};
+
+export default CatalogPage;

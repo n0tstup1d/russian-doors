@@ -10,18 +10,21 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { email, password } = Object.fromEntries(new FormData(e.target));
-    
-    try {
-      await loginUser(email, password);
-      localStorage.setItem('authToken', 'loggedIn');
+  // Обновите handleSubmit
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const { email, password } = Object.fromEntries(formData);
+  
+  try {
+      const { token, userId } = await loginUser(email, password);
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('userId', userId);
       navigate('/');
-    } catch (err) {
+  } catch (err) {
       setError(err.message);
-    }
-  };
+  }
+};
 
   return (
     <>

@@ -10,9 +10,18 @@ import ReturnPage from './pages/ReturnPage';
 import Contacts from './pages/Contacts';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminDashboard from './pages/AdminDashboard';
+import CartButton from './components/CartButtons/CartButton';
+import { CartProvider } from './components/CartContext/CartProvider';
+import CartPage from './pages/CartPage';
+
+
 
 export default function App() {
   return (
+    <CartProvider>
     <Router>
       <div className="App">
         <NavbarHeader />
@@ -21,8 +30,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/catalog" element={<CatalogPage />} />
+            <Route path="/cart" element={<CartPage />} /> {/* Добавленный маршрут */}
             <Route path="/work" element={<WorkPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
+            
             {/* <Route path="/delivery" element={<CatalogPage />} />
             <Route path="/installing" element={<CatalogPage />} /> */}
             <Route path="/returnProduct" element={<ReturnPage />} />
@@ -31,11 +42,23 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/adm" element={<CatalogPage />} />
             <Route path="/assets/document/policy.pdf" element={<a href="/assets/document/policy.pdf" />} />
-          </Routes>
+          
+            <Route path="/admin" element={<AdminLoginPage/>} />
+            <Route path="/admin/dashboard" element={
+                <AdminLayout> {/* Специальный лейаут без header/footer */}
+                  <AdminDashboard />
+                </AdminLayout>
+              } />
+           
+            </Routes>
         </main>
 
         <Footer />
+        <CartButton/>
+        {/* // Добавьте новые маршруты */}
+        
       </div>
     </Router>
+    </CartProvider>
   );
 }
