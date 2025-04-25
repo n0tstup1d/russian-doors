@@ -1,3 +1,4 @@
+//CatalogPage.js
 import React, { useContext } from 'react'; // Добавьте импорт useContext
 import { CartContext } from '../components/CartContext/CartProvider'; 
 import DefaultCards from '../components/cards/DefaultCard';

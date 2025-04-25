@@ -11,20 +11,25 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   // Обновите handleSubmit
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const { email, password } = Object.fromEntries(formData);
-  
-  try {
-      const { token, userId } = await loginUser(email, password);
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('userId', userId);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const { email, password } = Object.fromEntries(formData);
+    
+    try {
+      const data = await loginUser(email, password); // Используем полный ответ сервера
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('isAdmin', data.isAdmin);
+      localStorage.setItem('userId', data.userId); // Убедись, что сервер возвращает userId
+      
+      // Принудительный триггер события storage
+      window.dispatchEvent(new Event('storage'));
+      
       navigate('/');
-  } catch (err) {
+    } catch (err) {
       setError(err.message);
-  }
-};
+    }
+  };
 
   return (
     <>

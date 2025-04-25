@@ -1,21 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Добавлен useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../components/CartContext/CartProvider';
 import { Button, Card, Container, Row, Col, ListGroup, Badge } from 'react-bootstrap';
 import { getAuthToken } from '../services/authServices';
 
 const CartPage = () => {
-  const { 
-    cartItems, 
-    removeFromCart, 
-    incrementItem, 
-    decrementItem,
-    setCartItems
-  } = useContext(CartContext);
-  
+  const { cartItems, removeFromCart, incrementItem, decrementItem } = useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
   const token = getAuthToken();
 
@@ -26,18 +18,25 @@ const CartPage = () => {
   }, []);
 
   useEffect(() => {
-    const calculateTotal = () => {
-      return cartItems.reduce((acc, item) => {
-        const product = products.find(p => p.id === item.productId);
-        return acc + ((parseFloat(product?.price) || 0) * item.quantity);
-      }, 0);
-    };
-    setTotal(calculateTotal());
+    const total = cartItems.reduce((acc, item) => {
+      const product = products.find(p => p.id === item.productId);
+      const price = typeof product?.price === 'string' 
+        ? parseFloat(product.price.replace('₽', '')) 
+        : product?.price || 0;
+      return acc + price * item.quantity;
+    }, 0);
+    setTotal(total);
   }, [cartItems, products]);
 
   const handleCheckout = async () => {
+    if (!token) {
+      alert('Требуется авторизация');
+      navigate('/login');
+      return;
+    }
+
     try {
-      const response = await fetch('/api/update-products', {
+      const checkResponse = await fetch('/api/validate-cart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,23 +45,34 @@ const CartPage = () => {
         body: JSON.stringify({ items: cartItems })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (!checkResponse.ok) {
+        const errorData = await checkResponse.json();
         throw new Error(errorData.message);
       }
 
-      // Очистка корзины
-      setCartItems([]);
+      const checkoutResponse = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ items: cartItems })
+      });
+
+      if (!checkoutResponse.ok) {
+        const errorData = await checkoutResponse.json();
+        throw new Error(errorData.message);
+      }
+
       navigate('/checkout-success');
     } catch (err) {
-      setError(err.message);
+      alert(err.message);
     }
   };
 
   return (
     <Container className="my-5">
       <h2 className="mb-4 text-center">🛒 Ваша корзина</h2>
-      
       {cartItems.length === 0 ? (
         <div className="text-center py-5">
           <div className="alert alert-info w-75 mx-auto">
@@ -80,8 +90,12 @@ const CartPage = () => {
               const product = products.find(p => p.id === item.productId);
               if (!product) return null;
 
+              const price = typeof product.price === 'string' 
+                ? parseFloat(product.price.replace('₽', '')) 
+                : product.price;
+
               return (
-                <Col key={item.productId} xs={12}>
+                <Col key={`${item.productId}-${item.selectedSize}`} xs={12}>
                   <Card className="shadow-sm">
                     <Card.Body className="d-flex flex-column flex-md-row align-items-center">
                       <div className="me-md-4 mb-3 mb-md-0">
@@ -96,32 +110,34 @@ const CartPage = () => {
                           }}
                         />
                       </div>
-                      
                       <div className="flex-grow-1">
                         <div className="d-flex justify-content-between align-items-start mb-3">
                           <Card.Title className="mb-0">{product.name}</Card.Title>
                           <Button 
                             variant="danger" 
                             size="sm" 
-                            onClick={() => removeFromCart(item.productId)}
+                            onClick={() => removeFromCart(item.productId, item.selectedSize)}
                           >
                             &times;
                           </Button>
                         </div>
-
+                        {product.category === "Двери" && (
+                          <ListGroup.Item>
+                            Размер: <strong>{item.selectedSize}</strong>
+                          </ListGroup.Item>
+                        )}
                         <ListGroup horizontal className="mb-3">
                           <ListGroup.Item className="d-flex align-items-center">
                             <span className="me-2">Цена:</span>
-                            <Badge bg="secondary">{product.price}₽</Badge>
+                            <Badge bg="secondary">{price}₽</Badge>
                           </ListGroup.Item>
-                          
                           <ListGroup.Item className="d-flex align-items-center">
                             <span className="me-2">Количество:</span>
                             <div className="btn-group">
                               <Button
                                 variant="outline-dark"
                                 size="sm"
-                                onClick={() => decrementItem(item.productId)}
+                                onClick={() => decrementItem(item.productId, item.selectedSize)}
                               >
                                 -
                               </Button>
@@ -131,19 +147,19 @@ const CartPage = () => {
                               <Button
                                 variant="outline-dark"
                                 size="sm"
-                                onClick={() => incrementItem(item.productId)}
+                                onClick={() => incrementItem(item.productId, item.selectedSize)}
                               >
                                 +
                               </Button>
                             </div>
                           </ListGroup.Item>
-                          
                           <ListGroup.Item className="d-flex align-items-center">
                             <span className="me-2">Сумма:</span>
-                            <Badge bg="success">{(parseFloat(product.price) * item.quantity).toFixed(2)}₽</Badge>
+                            <Badge bg="success">
+                              {(price * item.quantity).toFixed(2)}₽
+                            </Badge>
                           </ListGroup.Item>
                         </ListGroup>
-
                         <Badge bg="info" className="me-2">
                           {product.category}
                         </Badge>
@@ -157,7 +173,6 @@ const CartPage = () => {
               );
             })}
           </Row>
-
           <div className="mt-5 p-4 bg-light rounded-3 shadow-sm">
             <div className="d-flex justify-content-between align-items-center">
               <h4 className="mb-0">
@@ -167,9 +182,9 @@ const CartPage = () => {
                 <Link to="/catalog" className="btn btn-outline-secondary">
                   Продолжить покупки
                 </Link>
-                <Link to="/checkout" className="btn btn-success" onClick={handleCheckout}>
+                <Button variant="success" onClick={handleCheckout}>
                   Оформить заказ →
-                </Link>
+                </Button>
               </div>
             </div>
           </div>

@@ -11,20 +11,24 @@ app.use(express.json());
 
 const DATA_DIR = path.join(__dirname, "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
+const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
 
-// Автоматическое создание папки data и файла users.json
+// Автоматическое создание папки data и файлов
 (async () => {
   try {
     await fs.access(DATA_DIR);
   } catch {
     await fs.mkdir(DATA_DIR);
     await fs.writeFile(USERS_FILE, "[]");
-    console.log("✅ Папка data и файл users.json созданы");
+    await fs.writeFile(PRODUCTS_FILE, JSON.stringify({
+      categories: [],
+      products: []
+    }));
+    console.log("✅ Папка data и файлы созданы");
   }
 })();
 
 // Регистрация
-// server.js (обработчик регистрации)
 app.post("/api/register", async (req, res) => {
     try {
       const users = JSON.parse(await fs.readFile(USERS_FILE, "utf-8"));
@@ -39,16 +43,16 @@ app.post("/api/register", async (req, res) => {
         email,
         password: await bcrypt.hash(password, 10),
         createdAt: new Date().toISOString(),
-        isAdmin: 0 // По умолчанию все пользователи не админы
+        isAdmin: 0
       };
   
       users.push(newUser);
-      await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2)); // Запись в JSON
+      await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
       res.status(201).json({ message: "Регистрация успешна" });
     } catch (error) {
       res.status(500).json({ message: "Ошибка сервера" });
     }
-  });
+});
 
 // Авторизация
 app.post("/api/login", async (req, res) => {
@@ -61,110 +65,132 @@ app.post("/api/login", async (req, res) => {
         return res.status(401).json({ message: "Неверные учетные данные" });
       }
   
-      console.log("Успешный вход:", { 
-        email: user.email, 
-        isAdmin: user.isAdmin 
-      });
+      const token = uuidv4();
+      const updatedUsers = users.map(u => 
+        u.id === user.id ? { ...u, token } : u
+      );
+  
+      await fs.writeFile(USERS_FILE, JSON.stringify(updatedUsers, null, 2));
   
       res.json({ 
-        token: uuidv4(), 
-        userId: user.id, 
-        isAdmin: user.isAdmin 
+        token,
+        userId: user.id,
+        isAdmin: user.isAdmin // Добавь это поле
       });
     } catch (error) {
       res.status(500).json({ message: "Ошибка сервера" });
     }
-  });
+});
 
-// Запуск сервера
+// Получение корзины
+app.get("/api/cart", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+      const users = JSON.parse(await fs.readFile(USERS_FILE, 'utf-8'));
+      const user = users.find(u => u.token === token);
+  
+      if (!user) return res.status(401).json({ message: "Unauthorized" });
+  
+      const cartPath = path.join(DATA_DIR, `cart_${user.id}.json`);
+      try {
+        const cart = await fs.readFile(cartPath, 'utf-8');
+        res.json(JSON.parse(cart));
+      } catch {
+        res.json({ items: [] });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Сохранение корзины
+app.post("/api/cart", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+      const users = JSON.parse(await fs.readFile(USERS_FILE, 'utf-8'));
+      const user = users.find(u => u.token === token);
+  
+      if (!user) return res.status(401).json({ message: "Unauthorized" });
+  
+      const cartPath = path.join(DATA_DIR, `cart_${user.id}.json`);
+      await fs.writeFile(cartPath, JSON.stringify(req.body));
+  
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Валидация корзины
+app.post("/api/validate-cart", async (req, res) => {
+    try {
+      const products = JSON.parse(await fs.readFile(PRODUCTS_FILE, 'utf-8')).products;
+      const cartItems = req.body.items;
+  
+      for (const item of cartItems) {
+        const product = products.find(p => p.id === item.productId);
+        if (!product || item.quantity > product.quantity) {
+          return res.status(400).json({ message: "Товар недоступен" });
+        }
+      }
+  
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Оформление заказа
+app.post("/api/checkout", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+      const users = JSON.parse(await fs.readFile(USERS_FILE, 'utf-8'));
+      const user = users.find(u => u.token === token);
+  
+      if (!user) return res.status(401).json({ message: "Unauthorized" });
+  
+      // Обновляем количество товаров
+      let products = JSON.parse(await fs.readFile(PRODUCTS_FILE, 'utf-8')).products;
+      const cartItems = req.body.items;
+  
+      cartItems.forEach(cartItem => {
+        const product = products.find(p => p.id === cartItem.productId);
+        if (product) {
+          product.quantity -= cartItem.quantity;
+        }
+      });
+  
+      await fs.writeFile(PRODUCTS_FILE, JSON.stringify({ products }, null, 2));
+  
+      // Очищаем корзину
+      const cartPath = path.join(DATA_DIR, `cart_${user.id}.json`);
+      await fs.writeFile(cartPath, JSON.stringify({ items: [] }));
+  
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.post('/api/validate-cart', async (req, res) => {
+  try {
+    const data = JSON.parse(await fs.readFile(PRODUCTS_FILE, 'utf-8'));
+    const cartItems = req.body.items;
+
+    for (const item of cartItems) {
+      const product = data.products.find(p => p.id === item.productId);
+      if (!product || item.quantity > product.quantity) {
+        return res.status(400).json({ 
+          message: `Товар "${product?.name}" недоступен в нужном количестве` 
+        });
+      }
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");
-  console.log("Путь к users.json:", USERS_FILE);
-});
-
-// Добавьте новый маршрут для корзины
-app.get('/api/cart', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    const users = JSON.parse(await fs.readFile(USERS_FILE, 'utf-8'));
-    const user = users.find(u => u.token === token);
-    
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-
-    const cartFile = path.join(DATA_DIR, `cart_${user.id}.json`);
-    try {
-      const cartData = await fs.readFile(cartFile, 'utf-8');
-      res.json({ items: JSON.parse(cartData) });
-    } catch {
-      res.json({ items: [] });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-app.post('/api/cart', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    const users = JSON.parse(await fs.readFile(USERS_FILE, 'utf-8'));
-    const user = users.find(u => u.token === token);
-    
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-
-    const cartFile = path.join(DATA_DIR, `cart_${user.id}.json`);
-    await fs.writeFile(cartFile, JSON.stringify(req.body.items || []));
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-app.post('/api/update-products', async (req, res) => {
-  try {
-    const productsData = await fs.readFile('data/products.json', 'utf-8');
-    const products = JSON.parse(productsData);
-    
-    req.body.items.forEach(cartItem => {
-      const product = products.products.find(p => p.id === cartItem.productId);
-      if (product) {
-        product.quantity -= cartItem.quantity;
-      }
-    });
-
-    await fs.writeFile('data/products.json', JSON.stringify(products, null, 2));
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ message: 'Ошибка обновления продуктов' });
-  }
-});
-
-// Модифицируем обработчик корзины
-app.post('/api/cart', async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    const users = JSON.parse(await fs.readFile(USERS_FILE, 'utf-8'));
-    const user = users.find(u => u.token === token);
-    
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-
-    const cartFile = path.join(DATA_DIR, `cart_${user.id}.json`);
-    await fs.writeFile(cartFile, JSON.stringify(req.body.items || []));
-    
-    // Обновляем количество товаров
-    const productsData = await fs.readFile('data/products.json', 'utf-8');
-    const products = JSON.parse(productsData);
-    
-    req.body.items.forEach(cartItem => {
-      const product = products.products.find(p => p.id === cartItem.productId);
-      if (product) {
-        product.quantity -= cartItem.quantity;
-      }
-    });
-
-    await fs.writeFile('data/products.json', JSON.stringify(products, null, 2));
-    
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
 });

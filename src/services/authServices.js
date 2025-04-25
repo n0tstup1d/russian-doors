@@ -48,7 +48,7 @@ export const setAuthToken = (token) => {
 };
 
 export const getAuthToken = () => {
-  return localStorage.getItem("authToken");
+  return localStorage.getItem("authToken") || null; // Явное возвращение null вместо undefined
 };
 
 export const removeAuthToken = () => {
