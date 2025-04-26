@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { CartContext } from '../CartContext/CartProvider';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function DefaultCards() {
@@ -12,6 +13,7 @@ export default function DefaultCards() {
   const [error, setError] = useState(null);
   const [selectedSizes, setSelectedSizes] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const navigate = useNavigate();
 
   // Загрузка данных
   useEffect(() => {
@@ -43,8 +45,8 @@ export default function DefaultCards() {
 
   return (
     <div className="container-fluid vh-100 position-relative">
-      {/* Модальное окно для подробностей */}
-      <Modal show={!!selectedProduct} onHide={() => setSelectedProduct(null)}>
+      {/* Модальное окно */}
+      <Modal show={!!selectedProduct} onHide={() => setSelectedProduct(null)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>{selectedProduct?.name}</Modal.Title>
         </Modal.Header>
@@ -53,17 +55,17 @@ export default function DefaultCards() {
             src={selectedProduct?.image} 
             className="img-fluid mb-3"
             alt={selectedProduct?.name}
-            style={{ maxHeight: '300px', objectFit: 'cover' }}
+            style={{ maxHeight: '400px', objectFit: 'contain' }}
           />
-          <p>{selectedProduct?.description || 'Описание отсутствует'}</p>
-          <div className="d-flex justify-content-between">
+          <p className="lead">{selectedProduct?.description || 'Описание отсутствует'}</p>
+          <div className="d-flex justify-content-between align-items-center">
             <span className="text-muted">Категория: {selectedProduct?.category}</span>
-            <strong>{selectedProduct?.price}₽</strong>
+            <strong className="fs-5">{selectedProduct?.price}₽</strong>
           </div>
         </Modal.Body>
       </Modal>
 
-      {/* Остальной интерфейс */}
+      {/* Мобильное меню */}
       <div className="d-md-none bg-light p-2 border-bottom">
         <Button 
           variant="outline-dark"
@@ -74,7 +76,7 @@ export default function DefaultCards() {
       </div>
 
       <div className="row g-0 h-100">
-        {/* Сайдбар с категориями */}
+        {/* Сайдбар категорий */}
         <div 
           className={`col-md-3 bg-light ${showMobileMenu ? 'd-block' : 'd-none d-md-block'}`}
           style={{ height: 'calc(100vh - 56px)', overflowY: 'auto' }}
@@ -127,7 +129,7 @@ export default function DefaultCards() {
           <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
             {filteredProducts.map(product => {
               const selectedSize = selectedSizes[product.id] || 
-                                (product.sizes ? product.sizes[0] : null);
+                                  (product.sizes ? product.sizes[0] : null);
 
               return (
                 <div key={product.id} className="col">
@@ -136,7 +138,8 @@ export default function DefaultCards() {
                       src={product.image} 
                       className="card-img-top" 
                       alt={product.name}
-                      style={{ height: '200px', objectFit: 'cover' }}
+                      style={{ height: '250px', objectFit: 'cover', cursor: 'pointer' }}
+                      onClick={() => setSelectedProduct(product)}
                     />
                     <div className="card-body">
                       <h5 className="card-title">{product.name}</h5>
@@ -144,31 +147,63 @@ export default function DefaultCards() {
                         <span className="badge bg-secondary">
                           {product.subcategory}
                         </span>
-                        <span className="text-dark fw-bold">
-                          {product.price}₽
-                        </span>
+                        <span className="text-dark fw-bold fs-5">
+                          {product.price}₽</span>
                       </div>
                       
                       {/* Выбор размера для дверей */}
                       {product.category === "Двери" && product.sizes && (
-                        <Form.Group className="mb-3">
-                          <Form.Label>Размер полотна:</Form.Label>
+                        <div className="mb-3">
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <Form.Label>Размер полотна:</Form.Label>
+                            <a 
+                              href="/size-guide" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-decoration-none text-primary"
+                            >
+                              Как определить?
+                            </a>
+                          </div>
                           <Form.Select
                             value={selectedSize}
-                            onChange={(e) => 
-                              setSelectedSizes(prev => ({
-                                ...prev,
-                                [product.id]: e.target.value
-                              }))
-                            }
+                            onChange={(e) => {
+                              if (e.target.value === "custom") {
+                                setSelectedSizes(prev => ({
+                                  ...prev,
+                                  [product.id]: ""
+                                }));
+                              } else {
+                                setSelectedSizes(prev => ({
+                                  ...prev,
+                                  [product.id]: e.target.value
+                                }));
+                              }
+                            }}
                           >
                             {product.sizes.map(size => (
                               <option key={size} value={size}>{size}</option>
                             ))}
+                            <option value="custom">Другое (указать)</option>
                           </Form.Select>
-                        </Form.Group>
+
+                          {/* Поле для кастомного размера */}
+                          {selectedSize === "custom" && (
+                            <Form.Control
+                              type="text"
+                              placeholder="Ширина x Высота (мм)"
+                              className="mt-2"
+                              value={selectedSizes[product.id] || ""}
+                              onChange={(e) => setSelectedSizes(prev => ({
+                                ...prev,
+                                [product.id]: e.target.value
+                              }))}
+                            />
+                          )}
+                        </div>
                       )}
 
+                      {/* Кнопки действий */}
                       <div className="d-grid gap-2">
                         <Button 
                           variant="outline-dark" 
@@ -180,10 +215,16 @@ export default function DefaultCards() {
                         <Button
                           variant="outline-dark" 
                           size="sm"
-                          onClick={() => addToCart({ 
-                            ...product, 
-                            selectedSize 
-                          })}
+                          onClick={() => {
+                            if (!localStorage.getItem('authToken')) {
+                              navigate('/login');
+                            } else {
+                              addToCart({ 
+                                ...product, 
+                                selectedSize: selectedSizes[product.id] 
+                              });
+                            }
+                          }}
                           disabled={product.quantity === 0}
                         >
                           {product.quantity > 0 ? 'В корзину' : 'Нет в наличии'}

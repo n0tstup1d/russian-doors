@@ -12,6 +12,7 @@ app.use(express.json());
 const DATA_DIR = path.join(__dirname, "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
+const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 
 // Автоматическое создание папки data и файлов
 (async () => {
@@ -75,7 +76,7 @@ app.post("/api/login", async (req, res) => {
       res.json({ 
         token,
         userId: user.id,
-        isAdmin: user.isAdmin // Добавь это поле
+        isAdmin: user.isAdmin 
       });
     } catch (error) {
       res.status(500).json({ message: "Ошибка сервера" });
@@ -188,6 +189,37 @@ app.post('/api/validate-cart', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.post('/api/orders', async (req, res) => {
+  try {
+    const orders = JSON.parse(await fs.readFile(ORDERS_FILE, 'utf-8') || [];
+    const newOrder = { 
+      ...req.body, 
+      id: uuidv4(),
+      createdAt: new Date().toISOString(),
+      status: 'pending'
+    };
+    
+    orders.push(newOrder);
+    await fs.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2));
+    res.status(201).json(newOrder);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Получение истории заказов
+app.get('/api/orders', async (req, res) => {
+  try {
+    const orders = JSON.parse(await fs.readFile(ORDERS_FILE, 'utf-8') || [];
+    const userOrders = orders.filter(order => 
+      order.userId === req.query.userId
+    );
+    res.json(userOrders);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
   }
 });
 

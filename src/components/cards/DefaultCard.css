@@ -1,0 +1,10 @@
+.size-guide-image {
+    border: 2px solid #8A2BE2;
+    border-radius: 10px;
+    padding: 5px;
+  }
+  
+  .custom-size-input::placeholder {
+    color: #6c757d;
+    opacity: 0.7;
+  }

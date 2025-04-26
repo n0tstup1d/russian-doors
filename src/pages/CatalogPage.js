@@ -1,19 +1,15 @@
-//CatalogPage.js
-import React, { useContext } from 'react'; // Добавьте импорт useContext
-import { CartContext } from '../components/CartContext/CartProvider'; 
+import React, { useContext } from 'react';
+import { CartContext } from '../components/CartContext/CartProvider';
 import DefaultCards from '../components/cards/DefaultCard';
+import CartButton from '../components/CartButtons/CartButton';
 
 const CatalogPage = () => {
   const { addToCart } = useContext(CartContext);
-  
-  // Добавьте проверку доступности контекста
-  if (!addToCart) {
-    console.error('CartContext is not available');
-  }
 
   return (
     <div className="container forCatalog">
       <DefaultCards addToCart={addToCart} />
+      <CartButton />
     </div>
   );
 };

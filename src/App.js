@@ -13,7 +13,7 @@ import RegisterPage from './pages/RegisterPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
-import CartButton from './components/CartButtons/CartButton';
+
 import { CartProvider } from './components/CartContext/CartProvider';
 import CartPage from './pages/CartPage';
 
@@ -54,9 +54,7 @@ export default function App() {
         </main>
 
         <Footer />
-        <CartButton/>
-        {/* // Добавьте новые маршруты */}
-        
+
       </div>
     </Router>
     </CartProvider>
