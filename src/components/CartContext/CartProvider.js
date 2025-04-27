@@ -7,6 +7,13 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [token, setToken] = useState(getAuthToken());
 
+  // Добавляем вычисление total
+  const total = cartItems.reduce((sum, item) => {
+    const price = typeof item.price === 'string' 
+      ? parseFloat(item.price.replace(/[^\d.]/g, '')) 
+      : item.price;
+    return sum + (price || 0) * (item.quantity || 1);
+  }, 0);
   // Синхронизация токена
   useEffect(() => {
     const handleStorageChange = () => setToken(getAuthToken());
@@ -59,13 +66,13 @@ export const CartProvider = ({ children }) => {
       alert('Войдите для добавления в корзину');
       return;
     }
-
+  
     setCartItems(prev => {
       const existingItem = prev.find(item => 
         item.productId === product.id && 
         item.selectedSize === product.selectedSize
       );
-
+  
       if (existingItem) {
         if (existingItem.quantity + 1 > product.quantity) {
           alert('Товар закончился');
@@ -77,12 +84,12 @@ export const CartProvider = ({ children }) => {
             : item
         );
       }
-
+  
       return [...prev, { 
-        productId: product.id, 
+        ...product, // Добавляем все данные продукта
+        productId: product.id,
         quantity: 1,
         selectedSize: product.selectedSize,
-        price: product.price
       }];
     });
   };
@@ -118,6 +125,11 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  // Очистка корзины
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   return (
     <CartContext.Provider
       value={{ 
@@ -125,7 +137,9 @@ export const CartProvider = ({ children }) => {
         addToCart, 
         removeFromCart,
         incrementItem,
-        decrementItem
+        decrementItem,
+        clearCart,
+        total // Добавляем total в контекст
       }}
     >
       {children}

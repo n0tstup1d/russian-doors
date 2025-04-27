@@ -1,9 +1,12 @@
+//OrderHistoryPage.js
 import React, { useEffect, useState } from 'react';
 import { Table, Badge } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const userId = localStorage.getItem('userId');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {

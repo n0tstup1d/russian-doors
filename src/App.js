@@ -1,3 +1,4 @@
+//App.js
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Footer from './components/FooterMain/Footer';
@@ -13,9 +14,13 @@ import RegisterPage from './pages/RegisterPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
-
 import { CartProvider } from './components/CartContext/CartProvider';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import PaymentPage from './pages/PaymentPage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
+import CheckoutSuccess from './pages/CheckoutSuccess';
+
 
 
 
@@ -42,7 +47,11 @@ export default function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/adm" element={<CatalogPage />} />
             <Route path="/assets/document/policy.pdf" element={<a href="/assets/document/policy.pdf" />} />
-          
+            
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout-success" element={<CheckoutSuccess />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/orders" element={<OrderHistoryPage />} />
             <Route path="/admin" element={<AdminLoginPage/>} />
             <Route path="/admin/dashboard" element={
                 <AdminLayout> {/* Специальный лейаут без header/footer */}
