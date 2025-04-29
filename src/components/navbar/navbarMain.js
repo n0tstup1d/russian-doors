@@ -51,6 +51,7 @@ export default function NavbarHeader() {
             {/* <ListDropdown to="/delivery">Доставка</ListDropdown>
             <ListDropdown to="/installing">Установка</ListDropdown> */}
             <ListDropdown to="/returnProduct">Возврат</ListDropdown>
+            <ListDropdown to="/orders">Заказы</ListDropdown>
             <ListDropdown to="/contacts">Контакты</ListDropdown>
             {/* <ListDropdown to="/auth">Авторизоваться</ListDropdown>
             <ListDropdown to="/exit">Выйти</ListDropdown> */}

@@ -22,89 +22,10 @@ const CheckoutPage = () => {
   const placemarkRef = useRef(null);
   const navigate = useNavigate();
 
-  // Инициализация Яндекс.Карт
-  useEffect(() => {
-    let isMounted = true;
-    let ymapsScript = null;
-
-    const initMap = () => {
-      if (!isMounted || mapRef.current) return;
-
-      try {
-        const map = new window.ymaps.Map('map', {
-          center: [51.2290, 58.4681],
-          zoom: 10,
-          controls: ['zoomControl']
-        });
-
-        map.events.add('click', async (e) => {
-          const coords = e.get('coords');
-          setCoordinates(coords);
-
-          // Удаляем предыдущий плейсмарк
-          if (placemarkRef.current) {
-            map.geoObjects.remove(placemarkRef.current);
-          }
-
-          // Геокодирование координат
-          try {
-            const response = await window.ymaps.geocode(coords);
-            const firstGeoObject = response.geoObjects.get(0);
-            setAddress(firstGeoObject.getAddressLine());
-          } catch {
-            setAddress('Адрес не определен');
-          }
-
-          // Создаем новый плейсмарк
-          placemarkRef.current = new window.ymaps.Placemark(
-            coords,
-            { 
-              hintContent: 'Точка доставки', 
-              balloonContent: address || 'Доставить сюда' 
-            },
-            {
-              preset: 'islands#redIcon',
-              draggable: true
-            }
-          );
-
-          map.geoObjects.add(placemarkRef.current);
-          map.panTo(coords, { flying: true });
-        });
-
-        mapRef.current = map;
-      } catch (err) {
-        if (isMounted) setError('Ошибка инициализации карты');
-      }
-    };
-
-    if (!window.ymaps) {
-      ymapsScript = document.createElement('script');
-      ymapsScript.src = 'https://api-maps.yandex.ru/2.1/?apikey=2dceea75-b7b1-453e-b44a-824b436d5c07&lang=ru_RU';
-      ymapsScript.async = true;
-      ymapsScript.onload = () => isMounted && window.ymaps.ready(initMap);
-      ymapsScript.onerror = () => isMounted && setError('Не удалось загрузить карты');
-      document.head.appendChild(ymapsScript);
-    } else {
-      window.ymaps.ready(initMap);
-    }
-
-    return () => {
-      isMounted = false;
-      if (mapRef.current) {
-        mapRef.current.destroy();
-        mapRef.current = null;
-      }
-      if (ymapsScript) {
-        document.head.removeChild(ymapsScript);
-      }
-    };
-  }, []);
-
   useEffect(() => {
     const loadDeliveryDates = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/deliveries.json');
+        const response = await fetch('http://localhost:5000/api/deliveries');
         if (!response.ok) throw new Error('Ошибка загрузки дат');
         const data = await response.json();
         const parsedDates = data.deliveries.map(d => parseISO(d.date));
@@ -118,7 +39,86 @@ const CheckoutPage = () => {
     loadDeliveryDates();
   }, []);
 
-  // Проверка доступности даты
+  useEffect(() => {
+    let isMounted = true;
+    let ymapsScript = null;
+    let mapInstance = null;
+
+    const initMap = () => {
+      if (!isMounted || deliveryMethod !== 'delivery') return;
+      
+      try {
+        if (mapRef.current) {
+          mapRef.current.destroy();
+          mapRef.current = null;
+        }
+
+        mapInstance = new window.ymaps.Map('map', {
+          center: [51.2290, 58.4681],
+          zoom: 10,
+          controls: ['zoomControl']
+        });
+
+        mapInstance.events.add('click', async (e) => {
+          const coords = e.get('coords');
+          setCoordinates(coords);
+          
+          if (placemarkRef.current) {
+            mapInstance.geoObjects.remove(placemarkRef.current);
+          }
+
+          try {
+            const response = await window.ymaps.geocode(coords);
+            const firstGeoObject = response.geoObjects.get(0);
+            setAddress(firstGeoObject.getAddressLine());
+          } catch {
+            setAddress('Адрес не определен');
+          }
+
+          placemarkRef.current = new window.ymaps.Placemark(
+            coords,
+            { 
+              hintContent: 'Точка доставки', 
+              balloonContent: address || 'Доставить сюда' 
+            },
+            { preset: 'islands#redIcon', draggable: true }
+          );
+          
+          mapInstance.geoObjects.add(placemarkRef.current);
+          mapInstance.panTo(coords, { flying: true });
+        });
+
+        mapRef.current = mapInstance;
+      } catch (err) {
+        if (isMounted) setError('Ошибка инициализации карты');
+      }
+    };
+
+    if (deliveryMethod === 'delivery') {
+      if (!window.ymaps) {
+        ymapsScript = document.createElement('script');
+        ymapsScript.src = 'https://api-maps.yandex.ru/2.1/?apikey=2dceea75-b7b1-453e-b44a-824b436d5c07&lang=ru_RU';
+        ymapsScript.async = true;
+        ymapsScript.onload = () => isMounted && window.ymaps.ready(initMap);
+        ymapsScript.onerror = () => isMounted && setError('Не удалось загрузить карты');
+        document.head.appendChild(ymapsScript);
+      } else {
+        window.ymaps.ready(initMap);
+      }
+    }
+
+    return () => {
+      isMounted = false;
+      if (mapInstance) {
+        mapInstance.destroy();
+        mapRef.current = null;
+      }
+      if (ymapsScript) {
+        document.head.removeChild(ymapsScript);
+      }
+    };
+  }, [deliveryMethod]);
+
   const isDateAvailable = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -126,12 +126,10 @@ const CheckoutPage = () => {
     return busyDates.filter(d => isSameDay(d, date)).length < 4;
   };
 
-  // Обработка отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Валидация доставки
     if (deliveryMethod === 'delivery') {
       if (!selectedDate) {
         setError('Выберите дату доставки!');
@@ -143,7 +141,6 @@ const CheckoutPage = () => {
       }
     }
 
-    // Валидация установки
     if (installationRequired) {
       if (!installationDate) {
         setError('Выберите дату установки!');
@@ -156,7 +153,6 @@ const CheckoutPage = () => {
     }
 
     try {
-      // Формирование данных заказа
       const orderData = {
         date: deliveryMethod === 'delivery' 
           ? formatISO(selectedDate, { representation: 'date' }) 
@@ -165,7 +161,8 @@ const CheckoutPage = () => {
           productId: item.id,
           quantity: item.quantity,
           price: item.price,
-          name: item.name
+          name: item.name,
+          selectedSize: item.selectedSize
         })),
         total: (total + (installationRequired ? 500 : 0)).toFixed(2),
         coordinates,
@@ -178,7 +175,6 @@ const CheckoutPage = () => {
         userId: localStorage.getItem('userId')
       };
 
-      // Отправка заказа
       const response = await fetch('http://localhost:5000/api/checkout', {
         method: 'POST',
         headers: { 
@@ -187,23 +183,25 @@ const CheckoutPage = () => {
         },
         body: JSON.stringify(orderData)
       });
-
-      if (!response.ok) throw new Error('Ошибка оформления заказа');
       
+      if (!response.ok) throw new Error('Ошибка оформления заказа');
       clearCart();
       navigate('/checkout-success', { state: orderData });
-
     } catch (err) {
       setError(err.message);
     }
   };
 
+  useEffect(() => {
+    if (!installationRequired) {
+      setInstallationDate(null);
+    }
+  }, [installationRequired]);
+
   return (
     <Container className="my-5">
       <h2 className="mb-4">✅ Оформление заказа</h2>
-      
       <Form onSubmit={handleSubmit}>
-        {/* Выбор способа доставки */}
         <Form.Group className="mb-4">
           <Form.Label>Способ получения:</Form.Label>
           <div className="d-flex gap-3">
@@ -224,10 +222,8 @@ const CheckoutPage = () => {
           </div>
         </Form.Group>
 
-        {/* Блок доставки */}
         {deliveryMethod === 'delivery' && (
           <>
-            {/* Выбор даты доставки */}
             <div className="mb-4">
               <h5>📅 Дата доставки</h5>
               {loading ? (
@@ -249,7 +245,6 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Блок карты */}
             <div className="mb-4">
               <h5>📍 Выберите адрес на карте</h5>
               <div 
@@ -258,7 +253,7 @@ const CheckoutPage = () => {
                   width: '100%', 
                   height: '400px', 
                   borderRadius: '8px',
-                  border: '1px solid #ccc'
+                  border: '1px solid #ccc' 
                 }}
               />
               {address && (
@@ -270,7 +265,6 @@ const CheckoutPage = () => {
           </>
         )}
 
-        {/* Блок установки */}
         <Form.Group className="mb-4">
           <Form.Check
             type="checkbox"
@@ -295,10 +289,8 @@ const CheckoutPage = () => {
           </div>
         )}
 
-        {/* Блок ошибок */}
         {error && <Alert variant="danger">{error}</Alert>}
 
-        {/* Итого */}
         <div className="mt-4 p-3 bg-light rounded">
           <h4>
             Итого к оплате: 
@@ -308,7 +300,6 @@ const CheckoutPage = () => {
           </h4>
         </div>
 
-        {/* Кнопки управления */}
         <div className="d-flex justify-content-between mt-5">
           <Button 
             variant="outline-secondary" 

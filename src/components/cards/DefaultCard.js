@@ -148,7 +148,7 @@ export default function DefaultCards() {
                           {product.subcategory}
                         </span>
                         <span className="text-dark fw-bold fs-5">
-                          {product.price}₽</span>
+                          {product.price}</span>
                       </div>
                       
                       {/* Выбор размера для дверей */}

@@ -10,9 +10,9 @@ const CheckoutSuccess = () => {
       <Alert variant="success" className="w-75 mx-auto">
         <h2 className="alert-heading">🎉 Заказ успешно оформлен!</h2>
         
-        <ListGroup className="my-4 text-start">
+        <ListGroup>
           <ListGroup.Item>Сумма: {state?.total}₽</ListGroup.Item>
-          <ListGroup.Item>Дата доставки: {state?.deliveryDate || 'Самовывоз'}</ListGroup.Item>
+          <ListGroup.Item>Дата доставки: {state?.date || 'Самовывоз'}</ListGroup.Item> {/* Исправлено с deliveryDate на date */}
           {state?.address && <ListGroup.Item>Адрес: {state.address}</ListGroup.Item>}
           {state?.installationDate && (
             <ListGroup.Item>Дата установки: {state.installationDate}</ListGroup.Item>
