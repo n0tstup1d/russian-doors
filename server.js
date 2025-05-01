@@ -447,6 +447,92 @@ app.post("/api/change-password", async (req, res) => {
   }
 });
 
+const adminOnly = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: "Требуется авторизация" });
+    }
+
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const user = users.find(u => u.token === token);
+    
+    if (!user || user.isAdmin !== 1) {
+      return res.status(403).json({ message: "Доступ запрещен" }); // Всегда возвращаем JSON
+    }
+    
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+};
+
+app.get('/api/admin/orders', adminOnly, async (req, res) => {
+  try {
+    const orders = JSON.parse(await fs.readFile(FILES.orders, 'utf-8'));
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+const { subYears, subMonths, subDays } = require('date-fns');
+
+// Добавьте новые эндпоинты для статистики
+app.get('/api/admin/stats', adminOnly, async (req, res) => {
+  try {
+    const period = req.query.period || 'all';
+    const orders = JSON.parse(await fs.readFile(FILES.orders, 'utf-8'));
+    const products = JSON.parse(await fs.readFile(FILES.products, 'utf-8')).products;
+    
+    const filteredOrders = filterOrdersByPeriod(orders, period);
+    
+    res.json({
+      totalRevenue: filteredOrders.reduce((sum, o) => sum + parseFloat(o.total), 0),
+      totalOrders: filteredOrders.length,
+      totalProducts: products.length,
+      lowStock: products.filter(p => p.quantity < 5).length,
+      recentOrders: filteredOrders.slice(-5) // Возвращаем 5 последних из ОТФИЛЬТРОВАННЫХ
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Экспорт данных в CSV
+app.get('/api/admin/export', adminOnly, async (req, res) => {
+  try {
+    const period = req.query.period || 'all';
+    const orders = JSON.parse(await fs.readFile(FILES.orders, 'utf-8'));
+    const filtered = filterOrdersByPeriod(orders, period);
+    
+    const csv = json2csv.parse(filtered, {
+      fields: ['id', 'date', 'total', 'status', 'createdAt']
+    });
+    
+    res.header('Content-Type', 'text/csv');
+    res.attachment(`orders_${period}.csv`);
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка экспорта" });
+  }
+});
+
+// Функция фильтрации заказов
+const filterOrdersByPeriod = (orders, period) => {
+  const now = new Date();
+  switch(period) {
+    case 'year':
+      return orders.filter(o => new Date(o.createdAt) > subYears(now, 1));
+    case 'month':
+      return orders.filter(o => new Date(o.createdAt) > subMonths(now, 1));
+    case 'week':
+      return orders.filter(o => new Date(o.createdAt) > subDays(now, 7));
+    default:
+      return orders;
+  }
+}
+
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");
 });

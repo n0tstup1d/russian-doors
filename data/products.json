@@ -23,7 +23,7 @@
       "name": "Дверь 1",
       "category": "Двери",
       "subcategory": "Входные",
-      "quantity": 2,
+      "quantity": 1,
       "price": "2500₽",
       "image": "https://picsum.photos/200/150?random=1",
       "description": "Прочная входная дверь",
@@ -39,7 +39,7 @@
       "name": "Ручка 1",
       "category": "Фурнитура",
       "subcategory": "Ручки",
-      "quantity": 1,
+      "quantity": 0,
       "price": "1500₽",
       "image": "https://picsum.photos/200/150?random=2",
       "description": "Стильная дверная ручка"
@@ -49,7 +49,7 @@
       "name": "Петля 1",
       "category": "Фурнитура",
       "subcategory": "Петли",
-      "quantity": -5,
+      "quantity": -6,
       "price": "150₽",
       "image": "https://picsum.photos/200/150?random=2",
       "description": "Стильная петля"

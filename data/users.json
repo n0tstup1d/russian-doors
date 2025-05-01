@@ -9,12 +9,12 @@
     "token": "6547a20b-4818-4695-83ae-4fca4c102543"
   },
   {
-    "id": "5aeaa22e-1fdc-4b9a-abe9-efe8542fa121",
+    "id": "d5a8f490-305b-4e3d-ad0e-04e8641d16a5",
     "email": "goringerman12@gmail.com",
     "phone": "+79698885511",
-    "password": "$2b$10$9VuyWD9oGisSKccQ6OULz.NQJ6BVu2rn41V4CS4Bbw9qc8yjAfjZy",
-    "createdAt": "2025-04-29T15:54:36.073Z",
-    "isAdmin": 0,
-    "token": "bd73a4f0-295c-47d2-b1f0-965914dc16f2"
+    "password": "$2b$10$HOtHcpKqmLSVM0EYRpcJcOXBR0Gi3n6.0gvdcF6HwS9sTHqXIReBq",
+    "createdAt": "2025-05-01T14:50:37.756Z",
+    "isAdmin": 1,
+    "token": "ead598bd-1bb2-4657-b31b-9a188bde71ea"
   }
 ]

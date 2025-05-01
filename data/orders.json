@@ -126,5 +126,40 @@
     "userId": "5aeaa22e-1fdc-4b9a-abe9-efe8542fa121",
     "id": "d609b256-9411-44a2-b172-c87702715e79",
     "createdAt": "2025-04-30T07:13:26.345Z"
+  },
+  {
+    "date": "2025-05-16",
+    "items": [
+      {
+        "productId": 1,
+        "quantity": 1,
+        "price": "2500₽",
+        "name": "Дверь 1"
+      },
+      {
+        "productId": 2,
+        "quantity": 1,
+        "price": "1500₽",
+        "name": "Ручка 1"
+      },
+      {
+        "productId": 3,
+        "quantity": 1,
+        "price": "150₽",
+        "name": "Петля 1"
+      }
+    ],
+    "total": "4650.00",
+    "coordinates": [
+      51.24580164184235,
+      58.4554781111091
+    ],
+    "address": "Оренбургская область, Орск, микрорайон Новый город, Троицкая улица",
+    "status": "В обработке",
+    "installationRequired": true,
+    "installationDate": "2025-05-17",
+    "userId": "d5a8f490-305b-4e3d-ad0e-04e8641d16a5",
+    "id": "6ff39f1f-b551-49cc-a630-301eb6caa84a",
+    "createdAt": "2025-05-01T14:52:57.318Z"
   }
 ]
