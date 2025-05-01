@@ -15,7 +15,11 @@ export const CartProvider = ({ children }) => {
   }, 0);
 
   useEffect(() => {
-    const handleStorageChange = () => setToken(getAuthToken());
+    const handleStorageChange = (e) => {
+      if (e.key === 'authToken') {
+        setToken(e.newValue || null);
+      }
+    };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);

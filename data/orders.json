@@ -33,5 +33,98 @@
     "userId": "fa066e1e-0967-4f8e-9ce0-b6751338f41d",
     "id": "2c1d61b6-eef7-4bd9-afef-58eb6484391e",
     "createdAt": "2025-04-29T12:19:36.776Z"
+  },
+  {
+    "date": "2025-05-01",
+    "items": [
+      {
+        "productId": 1,
+        "quantity": 1,
+        "price": "2500₽",
+        "name": "Дверь 1"
+      },
+      {
+        "productId": 2,
+        "quantity": 1,
+        "price": "1500₽",
+        "name": "Ручка 1"
+      },
+      {
+        "productId": 3,
+        "quantity": 1,
+        "price": "150₽",
+        "name": "Петля 1"
+      }
+    ],
+    "total": "4650.00",
+    "coordinates": [
+      51.241826678874865,
+      58.46355891309267
+    ],
+    "address": "Оренбургская область, Орск, микрорайон Новый город, улица Кутузова, 45, подъезд 1",
+    "status": "Доставлено",
+    "installationRequired": true,
+    "installationDate": "2025-05-02",
+    "userId": "5aeaa22e-1fdc-4b9a-abe9-efe8542fa121",
+    "id": "2e7f0841-cc47-4cc1-af09-da7a028c6c4b",
+    "createdAt": "2025-04-29T17:02:59.603Z"
+  },
+  {
+    "date": "2025-05-01",
+    "items": [
+      {
+        "productId": 3,
+        "quantity": 2,
+        "price": "150₽",
+        "name": "Петля 1"
+      },
+      {
+        "productId": 2,
+        "quantity": 2,
+        "price": "1500₽",
+        "name": "Ручка 1"
+      },
+      {
+        "productId": 1,
+        "quantity": 2,
+        "price": "2500₽",
+        "name": "Дверь 1"
+      }
+    ],
+    "total": "8800.00",
+    "coordinates": [
+      51.216487340795524,
+      58.4725008274788
+    ],
+    "address": "Оренбургская область, Орск, микрорайон Новый город, Мурманская улица, 6",
+    "status": "Доставлено",
+    "installationRequired": true,
+    "installationDate": "2025-05-02",
+    "userId": "5aeaa22e-1fdc-4b9a-abe9-efe8542fa121",
+    "id": "630773f0-29d1-4370-86eb-be5e9497d898",
+    "createdAt": "2025-04-29T17:13:30.244Z"
+  },
+  {
+    "date": "2025-05-31",
+    "items": [
+      {
+        "productId": 2,
+        "quantity": 1,
+        "price": "1500₽",
+        "name": "Ручка 1"
+      }
+    ],
+    "total": "2000.00",
+    "coordinates": [
+      51.261732496016386,
+      58.4523118890956
+    ],
+    "address": "Оренбургская область, Орск, посёлок Елшанка, Славгородская улица, 2",
+    "status": "В обработке",
+    "installationRequired": true,
+    "installationDate": "2025-05-31",
+    "userId": "5aeaa22e-1fdc-4b9a-abe9-efe8542fa121",
+    "id": "d609b256-9411-44a2-b172-c87702715e79",
+    "createdAt": "2025-04-30T07:13:26.345Z"
   }
 ]

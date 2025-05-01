@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ru } from 'date-fns/locale';
 import { formatISO, parseISO, isSameDay } from 'date-fns';
+import './css/non.css';
 
 const CheckoutPage = () => {
   const { cartItems, clearCart, total } = useContext(CartContext);
@@ -199,6 +200,8 @@ const CheckoutPage = () => {
   }, [installationRequired]);
 
   return (
+    <>
+    <div className="non"></div>
     <Container className="my-5">
       <h2 className="mb-4">✅ Оформление заказа</h2>
       <Form onSubmit={handleSubmit}>
@@ -317,6 +320,8 @@ const CheckoutPage = () => {
         </div>
       </Form>
     </Container>
+    <div className="non"></div>
+    </>
   );
 };
 

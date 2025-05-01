@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../components/CartContext/CartProvider';
 import { Button, Container, Card, Row, Col, ListGroup, Badge, Alert } from 'react-bootstrap';
-
+import './css/non.css';
 const CartPage = () => {
   const { 
     cartItems, 
@@ -11,12 +11,8 @@ const CartPage = () => {
     decrementItem, 
     total // Добавлено
   } = useContext(CartContext);
-  
   const navigate = useNavigate();
-
-  // Безопасное значение total
-  const safeTotal = total || 0;
-
+  
   const handleCheckout = () => {
     if (cartItems.length === 0) {
       alert('Корзина пуста!');
@@ -25,27 +21,26 @@ const CartPage = () => {
     navigate('/checkout');
   };
 
-  // Функция для форматирования цены
   const formatPrice = (price) => {
     const numericPrice = typeof price === 'string' 
       ? parseFloat(price.replace(/[^\d.]/g, '')) 
       : Number(price);
-      
     return isNaN(numericPrice) ? '0.00' : numericPrice.toFixed(2);
   };
 
   return (
+    <>
+    <div className="non"></div>
     <Container className="my-5">
       <h2 className="mb-4 text-center">🛒 Ваша корзина</h2>
-      
       {cartItems.length === 0 ? (
         <div className="text-center py-5">
-          <div className="alert alert-info w-75 mx-auto">
+          <Alert variant="info" className="w-75 mx-auto">
             <h4>😔 Корзина пуста</h4>
             <Link to="/catalog" className="btn btn-primary mt-3">
               Перейти к покупкам
             </Link>
-          </div>
+          </Alert>
         </div>
       ) : (
         <>
@@ -77,21 +72,20 @@ const CartPage = () => {
                           &times;
                         </Button>
                       </div>
-                      
                       {item.selectedSize && (
                         <ListGroup.Item className="mb-2">
                           Размер: <strong>{item.selectedSize}</strong>
                         </ListGroup.Item>
                       )}
-                      
                       <ListGroup horizontal className="mb-3">
                         <ListGroup.Item className="d-flex align-items-center">
                           <span className="me-2">Цена:</span>
                           <Badge bg="secondary">
-                            {formatPrice(item.price)}₽
+                            {item.category === 'door' && !item.selectedSize 
+                              ? '600мм' 
+                              : formatPrice(item.price)}₽
                           </Badge>
                         </ListGroup.Item>
-                        
                         <ListGroup.Item className="d-flex align-items-center">
                           <div className="btn-group">
                             <Button
@@ -114,13 +108,6 @@ const CartPage = () => {
                             </Button>
                           </div>
                         </ListGroup.Item>
-                        
-                        <ListGroup.Item className="d-flex align-items-center">
-                          <span className="me-2">Сумма:</span>
-                          <Badge bg="success">
-                            {formatPrice(item.price * item.quantity)}₽
-                          </Badge>
-                        </ListGroup.Item>
                       </ListGroup>
                     </div>
                   </Card.Body>
@@ -128,14 +115,14 @@ const CartPage = () => {
               </Col>
             ))}
           </Row>
-
           <div className="mt-5 p-4 bg-light rounded-3 shadow">
             <h4 className="mb-3">
               Итого: 
-              <span className="text-primary">
-                {typeof safeTotal === 'number' 
-                  ? safeTotal.toFixed(2)
-                  : '0.00'}₽
+              <span className="text-primary ms-2">
+                {total.toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}₽
               </span>
             </h4>
             <Button 
@@ -150,6 +137,8 @@ const CartPage = () => {
         </>
       )}
     </Container>
+    <div className="non"></div>
+    </>
   );
 };
 

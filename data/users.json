@@ -1,17 +1,20 @@
 [
   {
-    "id": "fa066e1e-0967-4f8e-9ce0-b6751338f41d",
-    "email": "goringerman12@gmail.com",
-    "password": "$2b$10$cEPzK33n7E5aDWMSl6C7zek4GdzPMp.NWxpc9nrI/EzmxKATB/lU2",
-    "createdAt": "2025-04-21T18:33:49.444Z",
-    "isAdmin": 1,
-    "token": "db954bf5-d7b3-4be7-984d-e5c2c79b7462"
-  },
-  {
     "id": "404ef95e-002c-41de-9017-6d8192be3fee",
     "email": "qweee@qweqwe",
+    "phone": "+71234567890",
     "password": "$2b$10$Lsv4JWrCpAtq.0/OO8voROGV4RWfas3AiE4tIGG3aRwgcwjgss6Vi",
     "createdAt": "2025-04-21T19:23:12.217Z",
-    "isAdmin": 0
+    "isAdmin": 0,
+    "token": "6547a20b-4818-4695-83ae-4fca4c102543"
+  },
+  {
+    "id": "5aeaa22e-1fdc-4b9a-abe9-efe8542fa121",
+    "email": "goringerman12@gmail.com",
+    "phone": "+79698885511",
+    "password": "$2b$10$9VuyWD9oGisSKccQ6OULz.NQJ6BVu2rn41V4CS4Bbw9qc8yjAfjZy",
+    "createdAt": "2025-04-29T15:54:36.073Z",
+    "isAdmin": 0,
+    "token": "bd73a4f0-295c-47d2-b1f0-965914dc16f2"
   }
 ]

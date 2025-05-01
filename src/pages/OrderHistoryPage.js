@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Badge, Button, Container, Alert, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import './css/non.css';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
@@ -80,13 +81,19 @@ const OrderHistoryPage = () => {
 
   if (loading) {
     return (
+      <>
+      <div className="non"></div>
       <Container className="text-center mt-5">
         <div className="spinner-border text-primary" role="status" />
       </Container>
+      <div className="non"></div>
+      </>
     );
   }
 
   return (
+    <>
+    <div className="non"></div>
     <Container className="my-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>📦 История заказов</h2>
@@ -152,6 +159,8 @@ const OrderHistoryPage = () => {
         </Row>
       )}
     </Container>
+    <div className="non"></div>
+    </>
   );
 };
 

@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Container, Alert, Button, ListGroup } from 'react-bootstrap';
+import './css/non.css';
 
 const CheckoutSuccess = () => {
   const { state } = useLocation();
 
   return (
+    <>
+    <div className="non"></div>
     <Container className="my-5 text-center">
       <Alert variant="success" className="w-75 mx-auto">
         <h2 className="alert-heading">🎉 Заказ успешно оформлен!</h2>
@@ -29,6 +32,8 @@ const CheckoutSuccess = () => {
         </div>
       </Alert>
     </Container>
+    <div className="non"></div>
+    </>
   );
 };
 

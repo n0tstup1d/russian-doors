@@ -52,9 +52,9 @@ const Footer = () => {
         {/* Разделитель */}
         <hr />
         
-        <div class="map-container1">
-          <p class="location-note">Мы находимся:</p>
-          <div class="map-container">
+        <div className="map-container1">
+          <p className="location-note">Мы находимся:</p>
+          <div className="map-container">
             <iframe 
               src="https://yandex.ru/map-widget/v1/?um=constructor%3A39abd049336778b73e11cb98efc0c4f9a8209f56fc81dd2100a001bcb9c22ac0&amp;source=constructor"
               allowfullscreen

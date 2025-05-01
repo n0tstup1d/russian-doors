@@ -1,3 +1,4 @@
+// RegisterPage.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../services/authServices';
@@ -12,35 +13,41 @@ const RegisterPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Обновите handleSubmit
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData);
-  
-  if (data.password !== data.confirmPassword) {
-      return setError('Пароли не совпадают');
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    
+    // Новое логирование
+    console.log("Отправляемые данные:", data);
+    
+    if (data.password !== data.confirmPassword) {
+        return setError('Пароли не совпадают');
+    }
 
-  if (!isPolicyAccepted) {
-      return setError('Необходимо согласие на обработку персональных данных');
-  }
+    if (!isPolicyAccepted) {
+        return setError('Необходимо согласие на обработку персональных данных');
+    }
 
-  try {
-      await registerUser({
-          email: data.email,
-          password: data.password
-      });
-      navigate('/login');
-  } catch (err) {
-      setError(err.message);
-  }
-};
+    if (!data.phone.match(/^\+7\d{10}$/)) {
+        return setError('Номер телефона должен быть в формате +7XXXXXXXXXX');
+    }
+
+    try {
+        await registerUser({
+            email: data.email,
+            phone: data.phone,
+            password: data.password
+        });
+        navigate('/login');
+    } catch (err) {
+        setError(err.message);
+    }
+  };
+
   return (
     <>
-    <div class="non">
-
-    </div>
+    <div className="non"></div>
     <div className="auth-page">
       <h2 className="text-center">Регистрация</h2>
       {error && <div className="alert alert-danger">{error}</div>}
@@ -48,6 +55,17 @@ const handleSubmit = async (e) => {
         <div className="mb-3">
           <label>Email</label>
           <input type="email" name="email" className="form-control" required />
+        </div>
+        <div className="mb-3">
+          <label>Номер телефона</label>
+          <input 
+            type="tel" 
+            name="phone" 
+            className="form-control"
+            placeholder="+7XXXXXXXXXX"
+            pattern="\+7\d{10}"
+            required 
+          />
         </div>
         <div className="mb-3">
           <label>Пароль</label>
@@ -83,8 +101,6 @@ const handleSubmit = async (e) => {
             </span>
           </div>
         </div>
-
-        {/* Чекбокс перенесен непосредственно перед кнопкой */}
         <div className="mb-3 form-check">
           <input
             type="checkbox"
@@ -95,14 +111,12 @@ const handleSubmit = async (e) => {
           />
           <label htmlFor="policyCheck" className="form-check-label">
             Я согласен с <a 
-  href={policyPdf} 
-  target="_blank" 
-  className="text"
-  rel="noopener noreferrer"
->политикой конфиденциальности</a>
+              href={policyPdf} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >политикой конфиденциальности</a>
           </label>
         </div>
-
         <button type="submit" className="btn btn-primary w-100">
           Зарегистрироваться
         </button>
@@ -111,9 +125,7 @@ const handleSubmit = async (e) => {
         </div>
       </form>
     </div>
-    <div class="non">
-
-    </div>
+    <div className="non"></div>
     </>
   );
 };

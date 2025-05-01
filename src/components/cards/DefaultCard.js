@@ -216,14 +216,10 @@ export default function DefaultCards() {
                           variant="outline-dark" 
                           size="sm"
                           onClick={() => {
-                            if (!localStorage.getItem('authToken')) {
-                              navigate('/login');
-                            } else {
-                              addToCart({ 
-                                ...product, 
-                                selectedSize: selectedSizes[product.id] 
-                              });
-                            }
+                            addToCart({ 
+                              ...product, 
+                              selectedSize: selectedSizes[product.id] 
+                            });
                           }}
                           disabled={product.quantity === 0}
                         >

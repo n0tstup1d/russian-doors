@@ -21,6 +21,8 @@ const ReturnPage = () => {
   }, []);
 
   return (
+    <>
+    <div className="non"></div>
     <div className="return-page">
       <header className="page-header">
         <h1 className="title-anim">Процесс возврата товара</h1>
@@ -60,6 +62,8 @@ const ReturnPage = () => {
         <p>Возврат возможен только при сохранении товарного вида и полной комплектации</p>
       </div>
     </div>
+    <div className="non"></div>
+    </>
   );
 };
 

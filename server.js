@@ -56,21 +56,35 @@ const FILES = {
 })();
 
 // Регистрация пользователя
+// server.js (исправленный обработчик регистрации)
 app.post("/api/register", async (req, res) => {
+  console.log("Полученные данные:", req.body);
   try {
     const users = JSON.parse(await fs.readFile(FILES.users, "utf-8"));
-    const { email, password } = req.body;
-    
+    const { email, phone, password } = req.body;
+
+    // Валидация телефона
+    if (!/^\+7\d{10}$/.test(phone)) {
+      return res.status(400).json({ message: "Неверный формат телефона" });
+    }
+
+    // Проверка уникальности
     if (users.some(u => u.email === email)) {
       return res.status(400).json({ message: "Email уже зарегистрирован" });
     }
+    if (users.some(u => u.phone === phone)) {
+      return res.status(400).json({ message: "Номер телефона уже используется" });
+    }
 
+    // Создание пользователя
     const newUser = {
       id: uuidv4(),
       email,
+      phone,
       password: await bcrypt.hash(password, 10),
       createdAt: new Date().toISOString(),
-      isAdmin: 0
+      isAdmin: 0,
+      token: null
     };
 
     users.push(newUser);
@@ -81,12 +95,16 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// Авторизация
+// Авторизация (исправленный обработчик)
 app.post("/api/login", async (req, res) => {
   try {
     const users = JSON.parse(await fs.readFile(FILES.users, "utf-8"));
-    const { email, password } = req.body;
-    const user = users.find(u => u.email === email);
+    const { login, password } = req.body; // Изменено с email на login
+
+    // Ищем по email или телефону
+    const user = users.find(u => 
+      u.email === login || u.phone === login
+    );
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: "Неверные учетные данные" });
@@ -96,7 +114,7 @@ app.post("/api/login", async (req, res) => {
     const updatedUsers = users.map(u => 
       u.id === user.id ? { ...u, token } : u
     );
-
+    
     await fs.writeFile(FILES.users, JSON.stringify(updatedUsers, null, 2));
     res.json({ 
       token,
@@ -352,6 +370,79 @@ app.post("/api/checkout", async (req, res) => {
     res.status(201).json({ success: true, orderId: orderData.id });
   } catch (err) {
     console.error("Ошибка оформления заказа:", err);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+app.get("/api/user", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const user = users.find(u => u.token === token);
+
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    // Возвращаем данные без чувствительной информации
+    const { password, token: _, ...safeUser } = user;
+    res.json(safeUser);
+
+  } catch (error) {
+    console.error('Ошибка в /api/user:', error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Обновление данных пользователя
+app.put("/api/user", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const userIndex = users.findIndex(u => u.token === token);
+    
+    if (userIndex === -1) return res.status(404).json({ message: "Пользователь не найден" });
+
+    const { email, phone } = req.body;
+    
+    // Валидация
+    if (!/^\+7\d{10}$/.test(phone)) {
+      return res.status(400).json({ message: "Неверный формат телефона" });
+    }
+
+    // Проверка уникальности
+    if (users.some((u, index) => index !== userIndex && u.email === email)) {
+      return res.status(400).json({ message: "Email уже используется" });
+    }
+
+    // Обновление данных
+    users[userIndex] = { ...users[userIndex], email, phone };
+    await fs.writeFile(FILES.users, JSON.stringify(users, null, 2));
+    
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+app.post("/api/change-password", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const userIndex = users.findIndex(u => u.token === token);
+    
+    if (userIndex === -1) return res.status(404).json({ message: "Пользователь не найден" });
+
+    const { oldPassword, newPassword } = req.body;
+    const user = users[userIndex];
+
+    if (!await bcrypt.compare(oldPassword, user.password)) {
+      return res.status(401).json({ message: "Неверный текущий пароль" });
+    }
+
+    users[userIndex].password = await bcrypt.hash(newPassword, 10);
+    await fs.writeFile(FILES.users, JSON.stringify(users, null, 2));
+    
+    res.json({ success: true });
+  } catch (error) {
     res.status(500).json({ message: "Ошибка сервера" });
   }
 });

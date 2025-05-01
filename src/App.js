@@ -21,6 +21,7 @@ import PaymentPage from './pages/PaymentPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import OrderDetailsPage from './pages/OrderDetailsPage';
+import ProfilePage from './pages/ProfilePage';
 
 
 
@@ -39,7 +40,7 @@ export default function App() {
             <Route path="/cart" element={<CartPage />} /> {/* Добавленный маршрут */}
             <Route path="/work" element={<WorkPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
-            
+            <Route path="/profile" element={<ProfilePage />} />
             {/* <Route path="/delivery" element={<CatalogPage />} />
             <Route path="/installing" element={<CatalogPage />} /> */}
             <Route path="/returnProduct" element={<ReturnPage />} />

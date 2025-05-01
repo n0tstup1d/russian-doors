@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Button, Card, ListGroup, Badge, Alert } from 'react-bootstrap';
+import './css/non.css';
 
 const OrderDetailsPage = () => {
   const { orderId } = useParams();
@@ -45,6 +46,8 @@ const OrderDetailsPage = () => {
   if (error) return <Alert variant="danger" className="m-3">{error}</Alert>;
 
   return (
+    <>
+    <div className="non"></div>
     <Container className="my-5">
       <Button variant="outline-secondary" onClick={() => navigate(-1)} className="mb-4">
         ← Назад к списку заказов
@@ -105,6 +108,8 @@ const OrderDetailsPage = () => {
         </Card.Body>
       </Card>
     </Container>
+    <div className="non"></div>
+    </>
   );
 };
 
