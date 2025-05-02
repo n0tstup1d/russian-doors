@@ -7,6 +7,7 @@ import './css/AdminDashboard.css';
 import OrdersTable from '../components/admin/OrdersTable';
 import ProductsTable from '../components/admin/ProductsTable';
 import UsersTable from '../components/admin/UsersTable';
+import DeliveriesTable from '../components/admin/DeliveriesTable';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -331,8 +332,11 @@ const getDeliveriesChartData = () => ({
           >
             <i className="fas fa-users"></i> Пользователи
           </li>
-          <li>
-            <i className="fas fa-users"></i> Доставки
+          <li 
+            className={selectedSection === 'deliveries' ? 'active' : ''}
+            onClick={() => setSelectedSection('deliveries')}
+          >
+            <i className="fas fa-truck"></i> Доставки
           </li>
           <li>
             <i className="fas fa-users"></i> Установки
@@ -561,6 +565,8 @@ const getDeliveriesChartData = () => ({
           <ProductsTable />
         ) : selectedSection === 'users' ? (
           <UsersTable />
+        ) : selectedSection === 'deliveries' ? (
+          <DeliveriesTable />
         ) : null}
       </div>
     </div>

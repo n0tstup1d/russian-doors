@@ -861,6 +861,30 @@ app.put('/api/admin/users/:id', adminOnly, async (req, res) => {
   }
 });
 
+app.get('/api/admin/deliveries', adminOnly, async (req, res) => {
+  try {
+    const orders = JSON.parse(await fs.readFile(FILES.orders, 'utf-8'));
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    
+    const deliveries = orders.map(order => {
+      const user = users.find(u => u.id === order.userId);
+      return {
+        id: order.id,
+        date: order.date,
+        address: order.address,
+        total: order.total,
+        status: order.status,
+        phone: user?.phone || 'Не указан'
+      };
+    });
+
+    res.json({ deliveries });
+  } catch (error) {
+    console.error('Ошибка получения доставок:', error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");
 });

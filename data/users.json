@@ -5,7 +5,7 @@
     "phone": "+71234567890",
     "password": "$2b$10$Lsv4JWrCpAtq.0/OO8voROGV4RWfas3AiE4tIGG3aRwgcwjgss6Vi",
     "createdAt": "2025-04-21T19:23:12.217Z",
-    "isAdmin": true,
+    "isAdmin": 0,
     "token": "6547a20b-4818-4695-83ae-4fca4c102543"
   },
   {

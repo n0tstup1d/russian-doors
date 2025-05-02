@@ -26,6 +26,7 @@ import UserDetailsPage from './components/admin/UserDetailsPage';
 import ProductsTable from './components/admin/ProductsTable';
 import ProductForm from './components/admin/ProductForm';
 import UsersTable from './components/admin/UsersTable';
+import DeliveriesTable from './components/admin/DeliveriesTable';
 
 
 
@@ -101,6 +102,14 @@ export default function App() {
               element={
                 <AdminLayout>
                   <UsersTable />
+                </AdminLayout>
+              } 
+            />
+            <Route 
+              path="/admin/deliveries" 
+              element={
+                <AdminLayout>
+                  <DeliveriesTable />
                 </AdminLayout>
               } 
             />
