@@ -6,6 +6,7 @@ import { ru } from 'date-fns/locale';
 import './css/AdminDashboard.css';
 import OrdersTable from '../components/admin/OrdersTable';
 import ProductsTable from '../components/admin/ProductsTable';
+import UsersTable from '../components/admin/UsersTable';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -324,8 +325,17 @@ const getDeliveriesChartData = () => ({
           >
             <i className="fas fa-box"></i> Товары
           </li>
-          <li>
+          <li 
+            className={selectedSection === 'users' ? 'active' : ''}
+            onClick={() => setSelectedSection('users')}
+          >
             <i className="fas fa-users"></i> Пользователи
+          </li>
+          <li>
+            <i className="fas fa-users"></i> Доставки
+          </li>
+          <li>
+            <i className="fas fa-users"></i> Установки
           </li>
         </ul>
         <button 
@@ -549,6 +559,8 @@ const getDeliveriesChartData = () => ({
           <OrdersTable />
         ) : selectedSection === 'products' ? (  // Добавлено новое условие
           <ProductsTable />
+        ) : selectedSection === 'users' ? (
+          <UsersTable />
         ) : null}
       </div>
     </div>

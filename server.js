@@ -815,6 +815,52 @@ app.post('/api/admin/products', adminOnly, async (req, res) => {
   }
 });
 
+// Получение всех пользователей
+app.get('/api/admin/users', adminOnly, async (req, res) => {
+  try {
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    res.json(users.map(user => {
+      const { password, ...safeUser } = user;
+      return safeUser;
+    }));
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Удаление пользователя
+app.delete('/api/admin/users/:id', adminOnly, async (req, res) => {
+  try {
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const filtered = users.filter(u => u.id !== req.params.id);
+    await fs.writeFile(FILES.users, JSON.stringify(filtered, null, 2));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка удаления" });
+  }
+});
+
+// Обновление пользователя
+app.put('/api/admin/users/:id', adminOnly, async (req, res) => {
+  try {
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const userIndex = users.findIndex(u => u.id === req.params.id);
+    
+    if (userIndex === -1) return res.status(404).json({ message: "Пользователь не найден" });
+    
+    // Обновляем только разрешенные поля
+    users[userIndex] = { 
+      ...users[userIndex], 
+      isAdmin: Number(req.body.isAdmin) // Конвертируем в число
+    };
+    
+    await fs.writeFile(FILES.users, JSON.stringify(users, null, 2));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка обновления" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");
 });

@@ -25,6 +25,7 @@ import ProfilePage from './pages/ProfilePage';
 import UserDetailsPage from './components/admin/UserDetailsPage';
 import ProductsTable from './components/admin/ProductsTable';
 import ProductForm from './components/admin/ProductForm';
+import UsersTable from './components/admin/UsersTable';
 
 
 
@@ -92,6 +93,14 @@ export default function App() {
               element={
                 <AdminLayout>
                   <ProductForm />
+                </AdminLayout>
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                <AdminLayout>
+                  <UsersTable />
                 </AdminLayout>
               } 
             />
