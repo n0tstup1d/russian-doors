@@ -5,6 +5,9 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 const schedule = require("node-schedule");
+const { isSameWeek, format } = require('date-fns');
+// const { parseISO, startOfWeek, format: dateFnsFormat } = require('date-fns');
+
 
 const app = express();
 const ORDER_STATUSES = {
@@ -20,6 +23,7 @@ const USERS_FILE = path.join(DATA_DIR, "users.json");
 const PRODUCTS_FILE = path.join(DATA_DIR, "products.json");
 const ORDERS_FILE = path.join(DATA_DIR, "orders.json");
 const DELIVERIES_FILE = path.join(DATA_DIR, "deliveries.json");
+const { startOfWeek, format: dateFnsFormat } = require('date-fns');
 
 const FILES = {
   users: path.join(DATA_DIR, "users.json"),
@@ -450,15 +454,14 @@ app.post("/api/change-password", async (req, res) => {
 const adminOnly = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ message: "Требуется авторизация" });
-    }
+    if (!token) return res.status(401).json({ message: "Требуется авторизация" });
 
     const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
     const user = users.find(u => u.token === token);
     
-    if (!user || user.isAdmin !== 1) {
-      return res.status(403).json({ message: "Доступ запрещен" }); // Всегда возвращаем JSON
+    if (!user || !user.isAdmin) {
+      // Важно: отправлять 403 даже если токен есть, но нет прав
+      return res.status(403).json({ message: "Доступ запрещен" });
     }
     
     next();
@@ -532,6 +535,204 @@ const filterOrdersByPeriod = (orders, period) => {
       return orders;
   }
 }
+
+// В эндпоинте /api/admin/deliveries-stats
+app.get('/api/admin/deliveries-stats', adminOnly, async (req, res) => {
+  try {
+    const { period } = req.query;
+    const deliveries = JSON.parse(await fs.readFile(FILES.deliveries, 'utf-8'));
+    
+    // Фильтрация данных
+    const filtered = deliveries.filter(d => {
+      const deliveryDate = new Date(d.date);
+      const now = new Date();
+      
+      switch(period) {
+        case 'year': return deliveryDate >= subYears(now, 1);
+        case 'month': return deliveryDate >= subMonths(now, 1);
+        case 'week': return deliveryDate >= subDays(now, 7);
+        default: return true;
+      }
+    });
+
+    // Группировка данных
+    const grouped = filtered.reduce((acc, { date }) => {
+      const deliveryDate = new Date(date);
+      let key;
+      
+      switch(period) {
+        case 'year':
+          key = format(deliveryDate, 'yyyy-MM');
+          break;
+        case 'month':
+          key = format(deliveryDate, 'yyyy-MM-dd');
+          break;
+        case 'week':
+          key = format(startOfWeek(deliveryDate, { weekStartsOn: 1 }), 'yyyy-MM-dd');
+          break;
+        default:
+          key = format(deliveryDate, 'yyyy-MM-dd');
+      }
+      
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Форматирование результата
+    const result = Object.entries(grouped).map(([date, count]) => ({
+      date,
+      count
+    })).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    res.json({
+      totalDeliveries: deliveries.length,
+      currentPeriod: filtered.length,
+      data: result
+    });
+  } catch (error) {
+    console.error('Ошибка в deliveries-stats:', error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Исправленная функция фильтрации
+const filterDeliveries = (deliveries, period) => {
+  const now = new Date();
+  switch(period) {
+    case 'year': return deliveries.filter(d => new Date(d.date) > subYears(now, 1));
+    case 'month': return deliveries.filter(d => new Date(d.date) > subMonths(now, 1));
+    case 'week': return deliveries.filter(d => new Date(d.date) > subDays(now, 7));
+    default: return deliveries;
+  }
+};
+
+// Корректная группировка по неделям
+const getDeliveryGroupKey = (dateString, period) => {
+  const date = new Date(dateString);
+  return period === 'week' 
+    ? format(startOfWeek(date, { weekStartsOn: 1 }), 'yyyy-MM-dd')
+    : format(date, 'yyyy-MM-dd');
+};
+
+// server.js
+app.get('/api/admin/verify', adminOnly, (req, res) => {
+  res.status(200).json({ valid: true });
+});
+
+// Экспорт доставок
+app.get('/api/admin/export-deliveries', adminOnly, async (req, res) => {
+  try {
+    const { period, specificDate } = req.query;
+    const stats = await fetchDeliveryStats(period, specificDate); // Логика аналогична эндпоинту выше
+    
+    const csv = json2csv.parse(stats, {
+      fields: ['date', 'count'],
+      header: true
+    });
+    
+    res.header('Content-Type', 'text/csv');
+    res.attachment(`deliveries_${period}_${specificDate || 'all'}.csv`);
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка экспорта" });
+  }
+});
+
+
+// Эндпоинт статистики пользователей
+app.get('/api/admin/users-stats', adminOnly, async (req, res) => {
+  try {
+    const period = req.query.period || 'all';
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    
+    const filteredUsers = users.filter(u => {
+      const regDate = new Date(u.createdAt);
+      const now = new Date();
+      
+      switch(period) {
+        case 'year': return regDate > subYears(now, 1);
+        case 'month': return regDate > subMonths(now, 1);
+        case 'week': return regDate > subDays(now, 7);
+        default: return true; // all
+      }
+    });
+
+    res.json({
+      totalUsers: users.length,
+      newUsers: filteredUsers.length,
+      registrationData: filteredUsers
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Эндпоинт экспорта
+app.get('/api/admin/export-users', adminOnly, async (req, res) => {
+  try {
+    const stats = JSON.parse(await fs.readFile(FILES.users, 'utf-8'))
+      .map(user => ({
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        registrationDate: user.createdAt,
+        isAdmin: user.isAdmin ? 'Да' : 'Нет'
+      }));
+
+    const csv = json2csv.parse(stats);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('users_export.csv');
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка экспорта" });
+  }
+});
+
+// server.js
+app.get("/api/user/check-admin", async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ isAdmin: false });
+
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const user = users.find(u => u.token === token);
+    
+    res.json({ isAdmin: user?.isAdmin === 1 });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+app.get('/api/admin/installations-stats', adminOnly, async (req, res) => {
+  try {
+    const period = req.query.period || 'all';
+    const orders = JSON.parse(await fs.readFile(FILES.orders, 'utf-8'));
+    
+    const filtered = orders.filter(o => 
+      o.status === 'Установлено' && 
+      new Date(o.installationDate) > getPeriodStart(period)
+    );
+
+    res.json({
+      totalInstallations: orders.filter(o => o.status === 'Установлено').length,
+      currentPeriod: filtered.length,
+      data: filtered
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Вспомогательная функция для дат
+const getPeriodStart = (period) => {
+  const now = new Date();
+  switch(period) {
+    case 'year': return subYears(now, 1);
+    case 'month': return subMonths(now, 1);
+    case 'week': return subDays(now, 7);
+    default: return new Date(0);
+  }
+};
 
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");

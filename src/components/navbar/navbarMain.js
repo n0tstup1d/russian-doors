@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import ListDropdown from '../listDropdown/listDropdown';
@@ -17,12 +17,36 @@ export default function NavbarHeader() {
     setActiveDropdown(prev => prev === menu ? null : menu);
   };
 
+  const isAuthenticated = !!localStorage.getItem('authToken');
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+        
+        const response = await fetch('http://localhost:5000/api/user/check-admin', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json();
+        setIsAdmin(data.isAdmin);
+      } catch (error) {
+        console.error('Ошибка проверки прав:', error);
+      }
+    };
+
+    if (isAuthenticated) checkAdminStatus();
+  }, [isAuthenticated]);
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    setIsAdmin(false); // Сброс статуса при выходе
     navigate('/login');
   };
-  const isAuthenticated = !!localStorage.getItem('authToken');
-
+  
+  
+  
 
 
   return (
@@ -57,6 +81,9 @@ export default function NavbarHeader() {
             <ListDropdown to="/exit">Выйти</ListDropdown> */}
             {isAuthenticated ? (
               <>
+                {isAdmin && (
+                  <ListDropdown to="/admin/dashboard">Админ панель</ListDropdown>
+                )}
                 <ListDropdown to="/profile">Профиль</ListDropdown>
                 <li className="nav-item">
                   <button 
@@ -73,6 +100,7 @@ export default function NavbarHeader() {
                 <ListDropdown to="/register">Регистрация</ListDropdown>
               </>
             )}
+            
           </ul>
           <div className="search-wrapper">
             <input

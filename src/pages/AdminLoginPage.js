@@ -24,6 +24,8 @@ const AdminLoginPage = () => {
   };
 
   return (
+    <>
+    <div className="non"></div>
     <div className="admin-login-container">
       <form onSubmit={handleSubmit}>
         <h2>Вход для администратора</h2>
@@ -33,6 +35,9 @@ const AdminLoginPage = () => {
         <button type="submit">Войти</button>
       </form>
     </div>
+    
+    <div className="non"></div>
+    </>
   );
 };
 

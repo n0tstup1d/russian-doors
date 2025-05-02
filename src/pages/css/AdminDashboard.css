@@ -1,6 +1,6 @@
 .admin-dashboard-container {
     display: flex;
-    height: 100vh;
+    height: 90%;
   }
   
   .sidebar {
@@ -130,4 +130,23 @@
   }
   .chart-container {
     min-height: 400px; /* Добавляем минимальную высоту */
+  }
+  .stat-card.bg-teal {
+    background-color: #008080 !important;
+    color: white;
+  }
+  
+  .stat-card.bg-pink {
+    background-color: #ff69b4 !important;
+    color: white;
+  }
+  
+  .stat-card.bg-purple {
+    background-color: #800080 !important;
+    color: white;
+  }
+  
+  .stat-card.bg-orange {
+    background-color: #ffa500 !important;
+    color: white;
   }

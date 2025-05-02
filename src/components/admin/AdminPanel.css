@@ -63,3 +63,28 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: 2rem;
   }
+  .users-section {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .users-section .filters {
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+
+  .bg-purple { background: #8a2be2; color: white; }
+  .bg-orange { background: #ff7f50; color: white; }
+  .bg-teal { background: #20b2aa; color: white; }
+  .bg-pink { background: #ff69b4; color: white; }
+
+  .installations-section, .deliveries-section {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }

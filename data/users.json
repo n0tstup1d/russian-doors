@@ -15,6 +15,15 @@
     "password": "$2b$10$HOtHcpKqmLSVM0EYRpcJcOXBR0Gi3n6.0gvdcF6HwS9sTHqXIReBq",
     "createdAt": "2025-05-01T14:50:37.756Z",
     "isAdmin": 1,
-    "token": "ead598bd-1bb2-4657-b31b-9a188bde71ea"
+    "token": "95be987f-9e5e-4568-9912-c252410d0bc4"
+  },
+  {
+    "id": "e2e9ca8b-7df2-4612-b14c-eded638de165",
+    "email": "qewqweqweqweqwe@com.com",
+    "phone": "+79698885512",
+    "password": "$2b$10$TU0OLhT3rFUiAOap9f6h/ubYBhH21NFpip2yASgCx.lgP7beYubdi",
+    "createdAt": "2025-05-01T20:15:15.723Z",
+    "isAdmin": 0,
+    "token": null
   }
 ]
