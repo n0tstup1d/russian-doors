@@ -1,0 +1,95 @@
+/* Profile.css */
+
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* Стили для вкладок */
+.nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 2rem;
+}
+
+.nav-tabs .nav-link {
+  color: black !important;
+  border: none;
+  background: transparent;
+  padding: 1rem 2rem;
+  transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0d6efd !important;
+  background: #f8f9fa !important;
+  border-bottom: 2px solid #0d6efd;
+}
+
+.nav-tabs .nav-link:hover {
+  background: #f8f9fa !important;
+  color: black !important;
+}
+
+/* Стили для формы смены пароля */
+.password-form {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.password-form .form-control {
+  margin-bottom: 1rem;
+}
+
+/* Стили для истории заказов */
+.order-carousel {
+  margin: 2rem 0;
+}
+
+.order-item {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.order-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Добавьте в конец файла */
+back-button {
+  background: white !important;
+  border: 1px solid #dee2e6 !important;
+  color: #333 !important;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: #f8f9fa !important;
+  border-color: #adb5bd !important;
+  transform: translateX(-5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

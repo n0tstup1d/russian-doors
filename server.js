@@ -734,6 +734,38 @@ const getPeriodStart = (period) => {
   }
 };
 
+app.delete('/api/admin/orders/:orderId', adminOnly, async (req, res) => {
+  try {
+    let orders = JSON.parse(await fs.readFile(FILES.orders, 'utf-8'));
+    orders = orders.filter(o => o.id !== req.params.orderId);
+    await fs.writeFile(FILES.orders, JSON.stringify(orders, null, 2));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка удаления" });
+  }
+});
+
+app.get('/api/user/:userId', adminOnly, async (req, res) => {
+  try {
+    console.log('[DEBUG] Requested user ID:', req.params.userId); // Логирование
+    
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    const user = users.find(u => u.id === req.params.userId);
+    
+    if (!user) {
+      console.log('[DEBUG] User not found'); // Логирование
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    const { password, token, ...safeUser } = user;
+    res.json(safeUser);
+    
+  } catch (error) {
+    console.error('[ERROR] /api/user/:userId:', error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");
 });

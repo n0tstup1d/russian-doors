@@ -22,6 +22,7 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import ProfilePage from './pages/ProfilePage';
+import UserDetailsPage from './components/admin/UserDetailsPage';
 
 
 
@@ -60,7 +61,14 @@ export default function App() {
                   <AdminDashboard />
                 </AdminLayout>
               } />
-           
+            <Route 
+              path="/admin/user/:userId" 
+              element={
+                <AdminLayout>
+                  <UserDetailsPage />
+                </AdminLayout>
+              } 
+            />
             </Routes>
         </main>
 
