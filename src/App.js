@@ -23,6 +23,8 @@ import CheckoutSuccess from './pages/CheckoutSuccess';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import ProfilePage from './pages/ProfilePage';
 import UserDetailsPage from './components/admin/UserDetailsPage';
+import ProductsTable from './components/admin/ProductsTable';
+import ProductForm from './components/admin/ProductForm';
 
 
 
@@ -66,6 +68,30 @@ export default function App() {
               element={
                 <AdminLayout>
                   <UserDetailsPage />
+                </AdminLayout>
+              } 
+            />
+            <Route 
+              path="/admin/products" 
+              element={
+                <AdminLayout>
+                  <ProductsTable />
+                </AdminLayout>
+              } 
+            />
+            <Route 
+              path="/admin/products/new" 
+              element={
+                <AdminLayout>
+                  <ProductForm />
+                </AdminLayout>
+              } 
+            />
+            <Route 
+              path="/admin/products/edit/:id" 
+              element={
+                <AdminLayout>
+                  <ProductForm />
                 </AdminLayout>
               } 
             />

@@ -196,4 +196,42 @@
     margin: 2px;
     font-size: 0.875rem;
   }
+  .products-table-container {
+    padding: 20px;
+  }
+  
+  .toolbar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+  }
+  
+  .search-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 300px;
+  }
+  
+  .products-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+  }
+  
+  .products-table th, 
+  .products-table td {
+    padding: 12px;
+    border: 1px solid #eee;
+    text-align: left;
+  }
+  
+  .products-table th {
+    background-color: #f8f9fa;
+  }
+  
+  .text-danger {
+    color: #dc3545;
+    font-weight: bold;
+  }
   

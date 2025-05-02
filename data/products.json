@@ -20,7 +20,7 @@
   "products": [
     {
       "id": 1,
-      "name": "Дверь 1",
+      "name": "Дверь 1 Тест",
       "category": "Двери",
       "subcategory": "Входные",
       "quantity": 1,

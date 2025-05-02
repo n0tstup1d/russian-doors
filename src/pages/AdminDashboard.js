@@ -5,6 +5,7 @@ import { format, subDays, subMonths, subYears, startOfWeek } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import './css/AdminDashboard.css';
 import OrdersTable from '../components/admin/OrdersTable';
+import ProductsTable from '../components/admin/ProductsTable';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -317,8 +318,11 @@ const getDeliveriesChartData = () => ({
           >
             <i className="fas fa-boxes"></i> Заказы
           </li>
-          <li>
-            <i className="fas fa-store"></i> Товары
+          <li 
+            className={selectedSection === 'products' ? 'active' : ''}
+            onClick={() => setSelectedSection('products')}
+          >
+            <i className="fas fa-box"></i> Товары
           </li>
           <li>
             <i className="fas fa-users"></i> Пользователи
@@ -543,6 +547,8 @@ const getDeliveriesChartData = () => ({
           </>
         ) : selectedSection === 'orders' ? (
           <OrdersTable />
+        ) : selectedSection === 'products' ? (  // Добавлено новое условие
+          <ProductsTable />
         ) : null}
       </div>
     </div>

@@ -766,6 +766,55 @@ app.get('/api/user/:userId', adminOnly, async (req, res) => {
   }
 });
 
+// Получение всех товаров
+app.get('/api/admin/products', adminOnly, async (req, res) => {
+  try {
+    const data = JSON.parse(await fs.readFile(FILES.products, 'utf-8'));
+    res.json({
+      categories: data.categories || [],
+      products: data.products || []
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// Удаление товара
+app.delete('/api/admin/products/:id', adminOnly, async (req, res) => {
+  try {
+    const data = JSON.parse(await fs.readFile(FILES.products, 'utf-8'));
+    data.products = data.products.filter(p => p.id !== parseInt(req.params.id));
+    await fs.writeFile(FILES.products, JSON.stringify(data, null, 2));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка удаления" });
+  }
+});
+
+// Создание/обновление товара
+app.post('/api/admin/products', adminOnly, async (req, res) => {
+  try {
+    const data = JSON.parse(await fs.readFile(FILES.products, 'utf-8'));
+    const product = req.body;
+    
+    if (product.id) {
+      // Редактирование
+      const index = data.products.findIndex(p => p.id === product.id);
+      if (index === -1) return res.status(404).json({ message: "Товар не найден" });
+      data.products[index] = product;
+    } else {
+      // Создание
+      product.id = Date.now();
+      data.products.push(product);
+    }
+    
+    await fs.writeFile(FILES.products, JSON.stringify(data, null, 2));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка сохранения" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");
 });

@@ -1,0 +1,25 @@
+.product-form-card {
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  
+  .product-form-card .form-label {
+    font-weight: 500;
+    color: #2c3e50;
+  }
+  
+  .product-form-card .form-control,
+  .product-form-card .form-select {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .product-form-card .form-control:focus,
+  .product-form-card .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.25);
+  }
+  
+  .non {
+    height: 60px;
+    background: transparent;
+  }
