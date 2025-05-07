@@ -885,6 +885,31 @@ app.get('/api/admin/deliveries', adminOnly, async (req, res) => {
   }
 });
 
+app.get('/api/admin/installations', adminOnly, async (req, res) => {
+  try {
+    const orders = JSON.parse(await fs.readFile(FILES.orders, 'utf-8'));
+    const users = JSON.parse(await fs.readFile(FILES.users, 'utf-8'));
+    
+    const installations = orders
+      .filter(o => o.status === 'Установлено' && o.installationDate)
+      .map(order => {
+        const user = users.find(u => u.id === order.userId);
+        return {
+          id: order.id,
+          installationDate: order.installationDate,
+          address: order.address,
+          phone: user?.phone || 'Не указан',
+          status: order.status
+        };
+      });
+
+    res.json({ installations });
+  } catch (error) {
+    console.error('Ошибка получения установок:', error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
 app.listen(5000, () => {
   console.log("Сервер запущен на http://localhost:5000");
 });

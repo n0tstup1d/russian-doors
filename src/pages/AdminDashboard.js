@@ -8,6 +8,7 @@ import OrdersTable from '../components/admin/OrdersTable';
 import ProductsTable from '../components/admin/ProductsTable';
 import UsersTable from '../components/admin/UsersTable';
 import DeliveriesTable from '../components/admin/DeliveriesTable';
+import InstallationsTable from '../components/admin/InstallationsTable';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -338,9 +339,12 @@ const getDeliveriesChartData = () => ({
           >
             <i className="fas fa-truck"></i> Доставки
           </li>
-          <li>
-            <i className="fas fa-users"></i> Установки
-          </li>
+          <li 
+              className={selectedSection === 'installations' ? 'active' : ''}
+              onClick={() => setSelectedSection('installations')}
+            >
+              <i className="fas fa-wrench"></i> Установки
+            </li>
         </ul>
         <button 
           className="logout-btn" 
@@ -567,6 +571,8 @@ const getDeliveriesChartData = () => ({
           <UsersTable />
         ) : selectedSection === 'deliveries' ? (
           <DeliveriesTable />
+        ) : selectedSection === 'installations' ? (
+          <InstallationsTable />
         ) : null}
       </div>
     </div>

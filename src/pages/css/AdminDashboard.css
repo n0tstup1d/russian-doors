@@ -132,22 +132,22 @@
     min-height: 400px; /* Добавляем минимальную высоту */
   }
   .stat-card.bg-teal {
-    background-color: #008080 !important;
+    background-color: #8A2BE2 !important;
     color: white;
   }
   
   .stat-card.bg-pink {
-    background-color: #ff69b4 !important;
+    background-color:  #FF69B4 !important;
     color: white;
   }
   
   .stat-card.bg-purple {
-    background-color: #800080 !important;
+    background-color: #8A2BE2 !important;
     color: white;
   }
   
   .stat-card.bg-orange {
-    background-color: #ffa500 !important;
+    background-color: #FF69B4 !important;
     color: white;
   }
   .orders-table-container {
@@ -338,12 +338,42 @@
       display: none !important;
     }
     
-    .deliveries-table {
+    .installations-table {
       width: 100%;
       border: 1px solid #000;
     }
     
-    .deliveries-table th {
+    .installations-table th {
       background-color: #ddd !important;
     }
+  }
+  .installations-table-container {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .installations-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .installations-table th, 
+  .installations-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+  
+  .installations-table th {
+    background-color: #f8f9fa;
+  }
+  
+  .date-filter {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 10px;
   }
